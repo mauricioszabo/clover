@@ -1,0 +1,5 @@
+node_modules
+.vscode-test/
+*.vsix
+lib/js
+.shadow-cljs
