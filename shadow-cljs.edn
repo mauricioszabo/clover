@@ -11,9 +11,8 @@
 
            :compiler-options {:infer-externs :auto}
            :exports {;:config clover.core/config
-                     :commands clover.core/commands
-                     :activate clover.core/activate}
-                     ; :deactivate clover.core/deactivate}
+                     :activate clover.core/activate
+                     :deactivate clover.core/deactivate}
                      ;:aux clover.core/aux
                      ;:repl clover.repl/exports
 

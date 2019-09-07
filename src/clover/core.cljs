@@ -1,29 +1,16 @@
 (ns clover.core
-  (:require ["vscode" :as vscode]))
-
-(def ^:private cmds (atom []))
+  (:require [clover.aux :as aux :include-macros true]
+            [clover.vs :as vs]
+            [clover.commands.connection :as conn]
+            ["vscode" :as vscode]))
 
 (defn activate [_ctx]
-  (reset! cmds [])
-  (prn :ACTIVATE!)
-  (let [disposable (.. vscode -commands
-                       (registerCommand "extension.helloWorld"
-                                        #(.. vscode -window
-                                             (showInformationMessage "Hello, Dude!"))))]
-    (swap! cmds conj disposable)))
+  (aux/add-disposable! (.. vscode -commands
+                           (registerCommand "extension.connectSocketRepl"
+                                            conn/connect!))))
 
 (defn deactivate []
-  (doseq [cmd @cmds]
-    (.dispose ^js cmd)))
-
-(def commands
-  (clj->js {:foo 10
-            :bar 20
-            :lol (fn [] 10)
-            :activate (fn [] activate)}))
-  ; (fn []
-  ;   (clj->js {:activate activate
-  ;             :deactivate deactivate})))
+  (aux/clear-all!))
 
 (defn before [done]
   (deactivate)
@@ -31,5 +18,5 @@
 
 (defn after []
   (activate nil)
-  (.. vscode -window (showInformationMessage "Reloaded Clover"))
+  (vs/info "Reloaded Clover")
   (println "Reloaded"))
