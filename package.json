@@ -10,14 +10,27 @@
 		"Other"
 	],
 	"activationEvents": [
-		"onCommand:extension.helloWorld"
+		"onCommand:extension.connectSocketRepl",
+		"onCommand:extension.connectCljsSocketRepl"
 	],
 	"main": "./extension.js",
 	"contributes": {
 		"commands": [
 			{
-				"command": "extension.helloWorld",
-				"title": "Hello World"
+				"command": "extension.connectSocketRepl",
+				"title": "Connect Clojure Socket REPL"
+			},
+			{
+				"command": "clover.evaluate-block",
+				"title": "Evaluate current block of code"
+			},
+			{
+				"command": "clover.evaluate-top-block",
+				"title": "Evaluate top-block of code"
+			},
+			{
+				"command": "clover.evaluate-selection",
+				"title": "Evaluate current selection of code"
 			}
 		]
 	},
