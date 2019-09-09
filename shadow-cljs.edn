@@ -6,30 +6,17 @@
                 [rewrite-cljs "0.4.4"]
                 [check "0.0.2-SNAPSHOT"]]
 
- :builds
- {:plugin {:target :node-library
+ :builds {
+          :plugin {:target :node-library
 
-           :compiler-options {:infer-externs :auto}
-           :exports {;:config clover.core/config
-                     :activate clover.core/activate
-                     :deactivate clover.core/deactivate}
-                     ;:aux clover.core/aux
-                     ;:repl clover.repl/exports
-
-                     ;:everything-provider
-                     ;clover.providers-consumers.everything/activate
-
-                     ;:autocomplete-provider
-                     ;clover.providers-consumers.autocomplete/provider
-
-                     ;:status-bar-consumer
-                     ;clover.providers-consumers.status-bar/activate
-
-                     ;:ink-consumer
-                     ;clover.providers-consumers.ink/activate
-
-
-           :output-dir "lib/js"
-           :output-to "lib/main.js"
-           :devtools {:before-load-async clover.core/before
-                      :after-load clover.core/after}}}}
+                   :compiler-options {:infer-externs :auto}
+                   :exports {:activate clover.core/activate
+                             :deactivate clover.core/deactivate}
+                   :output-dir "lib/js"
+                   :output-to "lib/main.js"
+                   :devtools {:before-load-async clover.core/before
+                              :after-load clover.core/after}}
+          :browser {:target :browser
+                    :asset-path "/js"
+                    :output-dir "view/js"
+                    :modules {:main {:init-fn clover.view.console/main}}}}}
