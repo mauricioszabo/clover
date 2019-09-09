@@ -1,5 +1,5 @@
 (ns clover.ui
-  (:require ["vscode" :refer [Uri]]
+  (:require ["vscode" :refer [Uri] :as vscode]
             ["path" :as path]))
 
 (defonce view (atom nil))
@@ -94,9 +94,20 @@ span.icon {
 </body>
 </html>"))))
 
-(defn render-console! []
-  (do-render-console! @view @curr-dir))
+(defn create-console! []
+  (let [res-path (.. Uri (file (. path join @curr-dir "view")))]
+    (reset! view (.. vscode -window
+                     (createWebviewPanel "clover-console"
+                                         "Clover REPL"
+                                         (.. vscode -ViewColumn -Two)
+                                         #js {:enableScripts true
+                                              :localResourceRoots #js [res-path]})))
+    (do-render-console! @view @curr-dir)))
 
 (defn send-output! [stream text]
   (.. ^js @view -webview
       (postMessage (pr-str {:command stream :obj text}))))
+
+(defn clear-console! []
+  (.. ^js @view -webview
+      (postMessage (pr-str {:command :clear}))))

@@ -18,17 +18,7 @@
                 (Location. (. Uri parse file-name) (Position. line 0)))))))
 
 (defn activate [^js ctx]
-  (when ctx
-    (reset! ui/curr-dir (.. ctx -extensionPath))
-    (let [res-path (.. vscode -Uri (file (. path join @ui/curr-dir "view")))]
-      (reset! ui/view (.. vscode -window
-                          (createWebviewPanel "chlorine-console"
-                                              "Chlorine REPL"
-                                              (.. vscode -ViewColumn -Two)
-                                              #js {:enableScripts true
-                                                   :localResourceRoots #js [res-path]}))))
-    (ui/render-console!))
-
+  (when ctx (reset! ui/curr-dir (.. ctx -extensionPath)))
   (aux/add-disposable! (.. vscode -commands
                            (registerCommand "extension.connectSocketRepl"
                                             conn/connect!)))

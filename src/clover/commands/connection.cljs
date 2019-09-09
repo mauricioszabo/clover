@@ -1,7 +1,7 @@
 (ns clover.commands.connection
   (:require [repl-tooling.editor-integration.connection :as connection]
             [clover.vs :as vs]
-            [clover.aux :as aux]
+            [clover.aux :as aux :include-macros true]
             [clover.ui :as ui]
             [clover.state :refer [state]]
             [clojure.string :as str]
@@ -13,6 +13,12 @@
     (if (js/isNaN port)
       (do (vs/error "Port must be a number") nil)
       [host port])))
+
+(defn- register-console! []
+  (ui/create-console!)
+  (aux/add-disposable! (.. vscode -commands
+                           (registerCommand "clover.clear-console"
+                                            ui/clear-console!))))
 
 (defn- connect-clj [[host port]]
   (.. (connection/connect-unrepl!
@@ -27,6 +33,8 @@
         :get-config vs/info
         :notify vs/info})
     (then (fn [st]
+            (register-console!)
+
             (swap! state assoc :conn st)
             (doseq [[key {:keys [command]}] (-> @st :editor/commands)]
               (prn :REGISTERING key command)

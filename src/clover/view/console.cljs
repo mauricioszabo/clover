@@ -4,9 +4,7 @@
             [cljs.reader :as edn]
             ["ansi_up" :default Ansi]))
 
-(defonce out-state
-  (r/atom [[:stdout "LOL"]
-           [:stderr "WAT"]]))
+(defonce out-state (r/atom []))
 
 (defn- rendered-content [parsed-ratom]
   (let [error? (-> parsed-ratom meta :error)]
@@ -54,12 +52,6 @@
       (swap! out-state #(-> % pop (conj [stream (str old-text text)])))
       (swap! out-state conj [stream text]))))
 
-; (defn stdout [txt]
-;   (append-text :stdout txt))
-;
-; (defn stderr [txt]
-;   (append-text :stderr txt))
-;
 (defn result [parsed-result repl]
   (swap! out-state conj [:result (render/parse-result parsed-result repl)]))
 
