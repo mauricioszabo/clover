@@ -5,7 +5,7 @@ const cmds = require('./lib/main.js');
  * @param {vscode.ExtensionContext} context
  */
 function activate(context) {
-	cmds.activate();
+	cmds.activate(context);
 }
 exports.activate = activate;
 
