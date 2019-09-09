@@ -11,3 +11,21 @@
 (defn prompt [prompt placeholder]
   (.. vscode -window (showInputBox #js {:prompt prompt
                                         :value placeholder})))
+
+(defn get-document-data [^js document ^js position]
+  {:contents (.getText document)
+   :filename (.-fileName document)
+   :range [[(.-line position) (.-character position)]]})
+
+(defn get-editor-data
+  ([] (get-editor-data (.. vscode -window -activeTextEditor)))
+  ([^js editor]
+   (let [document (. editor -document)
+         sel (. editor -selection)
+         start (. sel -start)
+         end (. sel -end)]
+     {:editor editor
+      :contents (.getText document)
+      :filename (.-fileName document)
+      :range [[(.-line start) (.-character start)]
+              [(.-line end) (.-character end)]]})))
