@@ -48,5 +48,11 @@
 		"shadow-cljs": "^2.8.52",
 		"typescript": "^3.3.1",
 		"vscode-test": "^1.0.2"
+	},
+	"dependencies": {
+		"ansi_up": "^4.0.4",
+		"create-react-class": "^15.6.3",
+		"react": "^16.9.0",
+		"react-dom": "^16.9.0"
 	}
 }
