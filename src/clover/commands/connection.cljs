@@ -2,20 +2,10 @@
   (:require [repl-tooling.editor-integration.connection :as connection]
             [clover.vs :as vs]
             [clover.aux :as aux]
+            [clover.ui :as ui]
+            [clover.state :refer [state]]
             [clojure.string :as str]
             ["vscode" :as vscode]))
-
-(defn- get-editor-data []
-  (let [current-editor (.. vscode -window -activeTextEditor)
-        document (. current-editor -document)
-        sel (. current-editor -selection)
-        start (. sel -start)
-        end (. sel -end)]
-    {:editor current-editor
-     :contents (.getText document)
-     :filename (.-fileName document)
-     :range [[(.-line start) (.-character start)]
-             [(.-line end) (.-character end)]]}))
 
 (defn- extract-host-port [txt]
   (let [[host port] (str/split txt #":")
@@ -27,16 +17,17 @@
 (defn- connect-clj [[host port]]
   (.. (connection/connect-unrepl!
        host port
-       {:on-stdout vs/info
-        :on-stderr vs/info
+       {:on-stdout #(ui/send-output! :stdout %)
+        :on-stderr #(ui/send-output! :stderr %)
         :on-result #(prn :RESULT %)
         :on-disconnect vs/info
         :on-start-eval vs/info
         :on-eval vs/info
-        :editor-data get-editor-data
+        :editor-data vs/get-editor-data
         :get-config vs/info
         :notify vs/info})
     (then (fn [st]
+            (swap! state assoc :conn st)
             (doseq [[key {:keys [command]}] (-> @st :editor/commands)]
               (prn :REGISTERING key command)
               (aux/add-disposable! (.. vscode
