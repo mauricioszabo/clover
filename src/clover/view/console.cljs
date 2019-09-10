@@ -1,7 +1,10 @@
 (ns clover.view.console
   (:require [reagent.core :as r]
             [repl-tooling.editor-integration.renderer :as render]
+            [repl-tooling.editor-helpers :as helpers]
             [cljs.reader :as edn]
+            [repl-tooling.eval :as eval]
+            [clojure.core.async :as async :include-macros true]
             ["ansi_up" :default Ansi]))
 
 (defonce out-state (r/atom []))
@@ -34,10 +37,13 @@
 (defn- all-scrolled? []
   (let [chlorine (chlorine-elem)
         chlorine-height (.-scrollHeight chlorine)
-        parent-height (.. div -clientHeight)
+        parent-height (.. js/document (querySelector "body") -clientHeight)
         offset (- chlorine-height parent-height)
         scroll-pos (.-scrollTop chlorine)]
+    (prn :SCROLLED? chlorine-height parent-height offset scroll-pos
+         :ELEM chlorine)
     (>= scroll-pos offset)))
+
 (defn- scroll-to-end! [scrolled?]
   (let [chlorine (chlorine-elem)]
     (when @scrolled?
@@ -62,16 +68,49 @@
                   :component-did-update #(scroll-to-end! scrolled?)})]
               div)))
 
+(def ^:private pending-evals (atom {}))
+(def ^:private post-message! (-> (js/acquireVsCodeApi) .-postMessage))
+
+(defrecord Evaluator [flavor]
+  eval/Evaluator
+  (evaluate [_ command _ callback]
+    (let [id (gensym)]
+      (swap! pending-evals assoc id callback)
+      (post-message! (pr-str {:op :eval-code
+                              :args {:command (str "(do\n" command "\n)")
+                                     :repl flavor
+                                     :id id}}))
+      id)))
+
+(defn- to-edn [string]
+  (let [edn (edn/read-string {:default tagged-literal} string)
+        txt (:as-text edn)]
+
+    (cond-> (dissoc edn :parsed?)
+            (contains? edn :result) (assoc :result txt)
+            (contains? edn :error) (assoc :error txt))))
+
+(defn- render-result [string-result repl-flavor]
+  (let [repl (->Evaluator repl-flavor)
+        result (to-edn string-result)]
+    (swap! out-state conj [:result (render/parse-result result repl)])))
+
+(defn- send-response! [{:keys [id result]}]
+  (let [callback (get @pending-evals id)]
+    (callback result))
+  (swap! pending-evals dissoc id))
+
 (defn main []
   (.. js/window
       (addEventListener "message"
                         (fn [message]
-                          (prn :TXT (.-data message) message)
                           (let [{:keys [command obj repl]} (->> message
                                                                 .-data
                                                                 edn/read-string)]
                             (case command
                               :stdout (append-text :stdout obj)
                               :stderr (append-text :stderr obj)
+                              :result (render-result obj repl)
+                              :eval-result (send-response! obj)
                               :clear (clear))))))
   (register-console!))

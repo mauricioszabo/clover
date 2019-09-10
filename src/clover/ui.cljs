@@ -1,5 +1,9 @@
 (ns clover.ui
-  (:require ["vscode" :refer [Uri] :as vscode]
+  (:require [cljs.reader :as edn]
+            [repl-tooling.editor-helpers :as helpers]
+            [repl-tooling.eval :as eval]
+            [clover.state :as st]
+            ["vscode" :refer [Uri] :as vscode]
             ["path" :as path]))
 
 (defonce view (atom nil))
@@ -86,6 +90,37 @@ span.icon {
 .info {
   color: @text-color-info;
 }
+
+/* RESULTS RENDERER */
+.chlorine.result a.chevron {
+  font-family: 'Octicons Regular';
+  font-weight: bold;
+  font-size: 16px;
+  margin-right: 10px;
+  width: 0px;
+  height: 15px;
+}
+.chlorine.result a.chevron.closed::before {
+  content: \"\\f078\";
+}
+
+.chlorine.result a.chevron.opened::before {
+  content: \"\\f0a3\";
+}
+
+.chlorine.result div {
+  display: flex;
+  white-space: pre;
+}
+
+.chlorine.result div.browseable,div.row {
+  flex-direction: column;
+}
+.chlorine.result div .children {
+  flex-direction: column;
+  margin-left: 1.5em;
+}
+
   </style>
 </head>
 <body>
@@ -93,6 +128,25 @@ span.icon {
   <script type='text/javascript' src='" res-js-path "'></script>
 </body>
 </html>"))))
+
+(defn- post-message! [message]
+  (.. ^js @view -webview
+      (postMessage (pr-str message))))
+
+(defn- evaluate! [{:keys [command repl id]}]
+  (let [evaluator (if (= repl :clj)
+                    (st/repl-for-clj))]
+    (eval/evaluate evaluator command {:ignore true}
+                   (fn [result]
+                     (post-message! {:command :eval-result
+                                     :obj {:result result :id id}})))))
+
+(defn- handle-message [{:keys [op args]}]
+  (case op
+    :eval-code (evaluate! args)))
+
+(defn- listen-to-events! [^js view]
+  (.. view -webview (onDidReceiveMessage (comp handle-message edn/read-string))))
 
 (defn create-console! []
   (let [res-path (.. Uri (file (. path join @curr-dir "view")))]
@@ -102,12 +156,14 @@ span.icon {
                                          (.. vscode -ViewColumn -Two)
                                          #js {:enableScripts true
                                               :localResourceRoots #js [res-path]})))
-    (do-render-console! @view @curr-dir)))
+    (do-render-console! @view @curr-dir)
+    (listen-to-events! @view)))
 
 (defn send-output! [stream text]
-  (.. ^js @view -webview
-      (postMessage (pr-str {:command stream :obj text}))))
+  (post-message! {:command stream :obj text}))
+
+(defn send-result! [result repl-flavor]
+  (post-message! {:command :result :obj (pr-str result) :repl repl-flavor}))
 
 (defn clear-console! []
-  (.. ^js @view -webview
-      (postMessage (pr-str {:command :clear}))))
+  (post-message! {:command :clear}))
