@@ -25,7 +25,7 @@
        host port
        {:on-stdout #(ui/send-output! :stdout %)
         :on-stderr #(ui/send-output! :stderr %)
-        :on-result #(prn :RESULT %)
+        :on-result #(ui/send-result! % :clj)
         :on-disconnect vs/info
         :on-start-eval vs/info
         :on-eval vs/info
@@ -33,9 +33,8 @@
         :get-config vs/info
         :notify vs/info})
     (then (fn [st]
-            (register-console!)
-
             (swap! state assoc :conn st)
+            (register-console!)
             (doseq [[key {:keys [command]}] (-> @st :editor/commands)]
               (prn :REGISTERING key command)
               (aux/add-disposable! (.. vscode
