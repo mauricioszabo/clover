@@ -26,11 +26,15 @@
 			},
 			{
 				"command": "clover.evaluate-top-block",
-				"title": "Evaluate top-block of code"
+				"title": "Evaluate current top-block of code"
 			},
 			{
 				"command": "clover.evaluate-selection",
 				"title": "Evaluate current selection of code"
+			},
+			{
+				"command": "clover.clear-console",
+				"title": "Clear Clojure console"
 			}
 		]
 	},
