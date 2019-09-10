@@ -1,6 +1,7 @@
 (ns clover.ui
   (:require [cljs.reader :as edn]
             [repl-tooling.editor-helpers :as helpers]
+            [repl-tooling.editor-integration.connection :as connection]
             [repl-tooling.eval :as eval]
             [clover.state :as st]
             ["vscode" :refer [Uri] :as vscode]
@@ -146,6 +147,7 @@ span.icon {
     :eval-code (evaluate! args)))
 
 (defn- listen-to-events! [^js view]
+  (.. view (onDidDispose connection/disconnect!))
   (.. view -webview (onDidReceiveMessage (comp handle-message edn/read-string))))
 
 (defn create-console! []
@@ -155,6 +157,7 @@ span.icon {
                                          "Clover REPL"
                                          (.. vscode -ViewColumn -Two)
                                          #js {:enableScripts true
+                                              :retainContextWhenHidden true
                                               :localResourceRoots #js [res-path]})))
     (do-render-console! @view @curr-dir)
     (listen-to-events! @view)))
