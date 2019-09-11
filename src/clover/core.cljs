@@ -1,29 +1,34 @@
 (ns clover.core
-  (:require ["vscode" :as vscode]))
+  (:require [clover.aux :as aux :include-macros true]
+            [clover.vs :as vs]
+            [clover.state :as st]
+            [clover.ui :as ui]
+            [clover.commands.connection :as conn]
+            [repl-tooling.features.definition :as definition]
+            [repl-tooling.editor-helpers :as helpers]
+            ["vscode" :as vscode :refer [Location Uri Position]]
+            ["path" :as path]))
 
-(def ^:private cmds (atom []))
+(defn- var-definition [document position]
+  (let [data (vs/get-document-data document position)
+        curr-var (helpers/current-var (:contents data) (-> data :range first))
+        [_ curr-ns] (helpers/ns-range-for (:contents data) (-> data :range first))]
+    (.. (definition/find-var-definition (st/repl-for-aux) curr-ns curr-var)
+        (then (fn [{:keys [file-name line]}]
+                (Location. (. Uri parse file-name) (Position. line 0)))))))
 
-(defn activate [_ctx]
-  (reset! cmds [])
-  (prn :ACTIVATE!)
-  (let [disposable (.. vscode -commands
-                       (registerCommand "extension.helloWorld"
-                                        #(.. vscode -window
-                                             (showInformationMessage "Hello, Dude!"))))]
-    (swap! cmds conj disposable)))
+(defn activate [^js ctx]
+  (when ctx (reset! ui/curr-dir (.. ctx -extensionPath)))
+  (aux/add-disposable! (.. vscode -commands
+                           (registerCommand "extension.connectSocketRepl"
+                                            conn/connect!)))
+  (aux/add-disposable! (.. vscode -languages
+                           (registerDefinitionProvider
+                            "clojure"
+                            #js {:provideDefinition var-definition}))))
 
 (defn deactivate []
-  (doseq [cmd @cmds]
-    (.dispose ^js cmd)))
-
-(def commands
-  (clj->js {:foo 10
-            :bar 20
-            :lol (fn [] 10)
-            :activate (fn [] activate)}))
-  ; (fn []
-  ;   (clj->js {:activate activate
-  ;             :deactivate deactivate})))
+  (aux/clear-all!))
 
 (defn before [done]
   (deactivate)
@@ -31,5 +36,5 @@
 
 (defn after []
   (activate nil)
-  (.. vscode -window (showInformationMessage "Reloaded Clover"))
+  (vs/info "Reloaded Clover")
   (println "Reloaded"))
