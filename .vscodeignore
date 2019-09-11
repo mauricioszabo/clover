@@ -4,5 +4,11 @@ test/**
 .gitignore
 vsc-extension-quickstart.md
 **/jsconfig.json
-**/*.map
 **/.eslintrc.json
+.shadow-cljs/**
+src/**
+test/**
+node_modules/**
+repl-tooling/**
+scripts/**
+shadow-cljs.edn
