@@ -12,6 +12,13 @@
   (.. vscode -window (showInputBox #js {:prompt prompt
                                         :value placeholder})))
 
+(defn choice [{:keys [message arguments]}]
+  (let [mapped (->> arguments (map (juxt :value :key)) (into {}))]
+    (info (pr-str mapped))
+    (.. vscode -window (showQuickPick (->> arguments (map :value) clj->js)
+                                      #js {:placeHolder message})
+        (then #(mapped %)))))
+
 (defn get-document-data [^js document ^js position]
   {:contents (.getText document)
    :filename (.-fileName document)
