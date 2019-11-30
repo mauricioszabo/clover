@@ -2,8 +2,8 @@
 	"name": "clover",
 	"displayName": "Clover",
 	"description": "Socket REPL development for your editor",
-        "publisher": "mauricioszabo",
-        "repository":"https://github.com/mauricioszabo/clover/",
+	"publisher": "mauricioszabo",
+	"repository": "https://github.com/mauricioszabo/clover/",
 	"version": "0.0.1",
 	"engines": {
 		"vscode": "^1.38.0"
@@ -20,7 +20,7 @@
 		"commands": [
 			{
 				"command": "extension.connectSocketRepl",
-				"title": "Connect Clojure Socket REPL"
+				"title": "Connect Socket REPL"
 			},
 			{
 				"command": "clover.evaluate-block",
@@ -37,6 +37,22 @@
 			{
 				"command": "clover.clear-console",
 				"title": "Clear Clojure console"
+			},
+			{
+				"command": "clover.disconnect",
+				"title": "Disconnect all REPLs"
+			},
+			{
+				"command": "clover.load-file",
+				"title": "Load File in current REPL"
+			},
+			{
+				"command": "clover.break-evaluation",
+				"title": "Break Clojure Evaluation"
+			},
+			{
+				"command": "clover.connect-embedded",
+				"title": "Start Shadow-CLJS' ClojureScript REPL"
 			}
 		]
 	},
@@ -60,5 +76,10 @@
 		"create-react-class": "^15.6.3",
 		"react": "^16.9.0",
 		"react-dom": "^16.9.0"
+	},
+	"__metadata": {
+		"id": "46228898-6f2d-4345-b0a1-110cecdc9866",
+		"publisherDisplayName": "Maurício Szabo",
+		"publisherId": "5954deb7-f27b-4b00-8b5b-22970a2bc859"
 	}
 }
