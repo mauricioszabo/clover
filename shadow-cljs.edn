@@ -1,9 +1,7 @@
 ;; shadow-cljs configuration
 {:source-paths ["src" "repl-tooling/src" "repl-tooling/resources"]
 
- :dependencies [[org.clojure/core.async "0.4.474"]
-                [reagent "0.8.1"]
-                [rewrite-cljs "0.4.4"]
+ :dependencies [[repl-tooling "0.3.0-SNAPSHOT"]
                 [check "0.0.2-SNAPSHOT"]]
 
  :builds {
