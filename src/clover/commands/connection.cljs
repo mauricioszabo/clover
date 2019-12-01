@@ -5,7 +5,9 @@
             [clover.ui :as ui]
             [clover.state :as state]
             [clojure.string :as str]
-            ["vscode" :as vscode]))
+            ["vscode" :as vscode]
+            ["path" :as path]
+            ["fs" :refer [existsSync readFileSync]]))
 
 (defn- extract-host-port [txt]
   (let [[host port] (str/split txt #":")
@@ -22,22 +24,40 @@
 
 (defn- disconnect! []
   (connection/disconnect!)
-  (aux/clear-transients!)
-  (reset! state/state {})
-  (vs/info "Disconnected from REPLs"))
+  (when-not (empty? @state/state)
+    (aux/clear-transients!)
+    (reset! state/state {})
+    (vs/info "Disconnected from REPLs")))
+
+(defn- folders []
+  (->> (.. vscode -workspace -workspaceFolders)
+       (map #(-> % .-uri str (str/replace #"file://" "")))
+       vec))
+
+(defn- get-config []
+  {:project-paths (folders)
+   :eval-mode :prefer-clj})
+
+(defn- notify! [{:keys [type title message]}]
+  (let [txt (cond-> title message (str ": " message))]
+    (case type
+      :info (vs/info txt)
+      :warning (vs/warn txt)
+      :error (vs/error txt))))
 
 (defn- connect-clj [[host port]]
-  (.. (connection/connect-unrepl!
+  (.. (connection/connect!
        host port
        {:on-stdout #(ui/send-output! :stdout %)
         :on-stderr #(ui/send-output! :stderr %)
         :on-result #(ui/send-result! % :clj)
         :on-disconnect disconnect!
-        :on-start-eval vs/info
-        :on-eval vs/info
+        :prompt vs/choice
+        :get-config get-config
+        ; :on-start-eval vs/info
+        ; :on-eval vs/info
         :editor-data vs/get-editor-data
-        :get-config vs/info
-        :notify vs/info})
+        :notify notify!})
       (then (fn [st]
               (swap! state/state assoc :conn st
                      (register-console!)
@@ -45,15 +65,18 @@
                        (aux/add-transient! (.. vscode
                                                -commands
                                                (registerCommand (str "clover." (name key))
-                                                                command))))
+                                                                command)))))))))
 
-                     (vs/info "Clojure REPL connected"))))))
-
+(defn- find-shadow-port []
+  (->> (folders)
+       (map #(path/join % ".shadow-cljs" "socket-repl.port"))
+       (filter existsSync)
+       first))
 
 (defn connect! []
   (if (state/repl-for-clj)
     (vs/warn "REPL is already connected")
     (.. (vs/prompt "Connect to Clojure: inform <host>:<port>"
-                   "localhost:4444")
+                   (str "localhost:" (some-> (find-shadow-port) readFileSync)))
         (then extract-host-port)
         (then #(when % (connect-clj %))))))
