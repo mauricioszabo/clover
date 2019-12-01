@@ -12,10 +12,12 @@
 (defn- var-definition [document position]
   (let [data (vs/get-document-data document position)
         [_ curr-var] (helpers/current-var (:contents data) (-> data :range first))
-        [_ curr-ns] (helpers/ns-range-for (:contents data) (-> data :range first))]
-    (.. (definition/find-var-definition (st/repl-for-aux) curr-ns curr-var)
-        (then (fn [{:keys [file-name line]}]
-                (Location. (. Uri parse file-name) (Position. line 0)))))))
+        [_ curr-ns] (helpers/ns-range-for (:contents data) (-> data :range first))
+        kind (some-> @st/state :conn deref :repl/info :kind)]
+    (when-let [repl (and (= kind :clj) (st/repl-for-aux))]
+      (.. (definition/find-var-definition repl curr-ns curr-var)
+          (then (fn [{:keys [file-name line]}]
+                  (Location. (. Uri parse file-name) (Position. line 0))))))))
 
 (def icons
   (let [vs-icons (-> vscode .-CompletionItemKind (js->clj :keywordize-keys true))]

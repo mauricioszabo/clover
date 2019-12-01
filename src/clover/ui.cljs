@@ -158,8 +158,8 @@ span.icon {
       (postMessage (pr-str message))))
 
 (defn- evaluate! [{:keys [command repl id]}]
-  (let [evaluator (if (= repl :clj)
-                    (st/repl-for-clj))]
+  (when-let [evaluator (if (= repl :clj)
+                         (st/repl-for-clj))]
     (eval/evaluate evaluator command {:ignore true}
                    (fn [result]
                      (post-message! {:command :eval-result
