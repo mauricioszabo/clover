@@ -17,6 +17,10 @@ For now, the following Clojure implementations were tested and are known to work
 * Joker
 * Babashka
 
+### Example:
+
+![Evaluating code](doc/sample.gif)
+
 ## Usage:
 Fire up a clojure REPL with Socket REPL support. With `shadow-cljs`, when you `watch` some build ID it'll give you a port for nREPL and Socket REPL. With `lein`, invoke it in a folder where you have `project.clj` and you can use `JVM_OPTS` environment variable like:
 
