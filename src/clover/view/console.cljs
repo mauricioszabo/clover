@@ -31,23 +31,14 @@
 
 (defonce div (. js/document querySelector "div"))
 
-(defn- chlorine-elem []
-  (. div (querySelector "div.chlorine")))
-
 (defn- all-scrolled? []
-  (let [chlorine (chlorine-elem)
-        chlorine-height (.-scrollHeight chlorine)
-        parent-height (.. js/document (querySelector "body") -clientHeight)
-        offset (- chlorine-height parent-height)
-        scroll-pos (.-scrollTop chlorine)]
-    (prn :SCROLLED? chlorine-height parent-height offset scroll-pos
-         :ELEM chlorine)
-    (>= scroll-pos offset)))
+  (let [window-scroll-pos (+ (.. js/window -scrollY) (.. js/window -innerHeight) 1)
+        document-height (.. js/document (querySelector "body") -clientHeight)]
+    (>= window-scroll-pos document-height)))
 
 (defn- scroll-to-end! [scrolled?]
-  (let [chlorine (chlorine-elem)]
-    (when @scrolled?
-      (set! (.-scrollTop chlorine) (.-scrollHeight chlorine)))))
+  (when @scrolled?
+    (.scroll js/window 0 (.. js/document (querySelector "body") -clientHeight))))
 
 (defn clear []
   (reset! out-state []))
@@ -59,7 +50,7 @@
       (swap! out-state conj [stream text]))))
 
 (defn result [parsed-result repl]
-  (swap! out-state conj [:result (render/parse-result parsed-result repl)]))
+  (swap! out-state conj [:result (render/parse-result parsed-result repl (atom {}))]))
 
 (defn register-console! []
   (let [scrolled? (atom true)]
@@ -69,7 +60,7 @@
               div)))
 
 (def ^:private pending-evals (atom {}))
-(def ^:private post-message! (-> (js/acquireVsCodeApi) .-postMessage))
+(defonce ^:private post-message! (-> (js/acquireVsCodeApi) .-postMessage))
 
 (defrecord Evaluator [flavor]
   eval/Evaluator
@@ -84,16 +75,17 @@
 
 (defn- to-edn [string]
   (let [edn (edn/read-string {:default tagged-literal} string)
-        txt (:as-text edn)]
+        txt (:as-text edn)
+        key (if (:error edn) :error :result)]
 
-    (cond-> (dissoc edn :parsed?)
-            (contains? edn :result) (assoc :result txt)
-            (contains? edn :error) (assoc :error txt))))
+    (-> edn
+        (dissoc :parsed?)
+        (assoc key txt))))
 
 (defn- render-result [string-result repl-flavor]
   (let [repl (->Evaluator repl-flavor)
         result (to-edn string-result)]
-    (swap! out-state conj [:result (render/parse-result result repl)])))
+    (swap! out-state conj [:result (render/parse-result result repl (atom {}))])))
 
 (defn- send-response! [{:keys [id result]}]
   (let [callback (get @pending-evals id)]

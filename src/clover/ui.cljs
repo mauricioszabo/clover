@@ -11,8 +11,8 @@
 (defonce curr-dir (atom nil))
 
 (defn- do-render-console! [^js webview curr-dir]
-  (let [js-path (. path join curr-dir "view/js/main.js")
-        font-path (. path join curr-dir "view/octicons.ttf")
+  (let [js-path (. path join curr-dir "view" "js" "main.js")
+        font-path (. path join curr-dir "view" "octicons.ttf")
         res-js-path (.. Uri (file js-path) (with #js {:scheme "vscode-resource"}))
         res-font-path (.. Uri (file font-path) (with #js {:scheme "vscode-resource"}))]
     (set! (.. webview -webview -html) (str "<html>
@@ -26,17 +26,40 @@
 div.chlorine.console {
   width: 100%;
   height: 100%;
-  background-color: @syntax-background-color;
-  color: #c5c8c6;
+  color: var(--vscode-editor-foreground);
   overflow: auto;
   font-family: Menlo, Consolas, 'DejaVu Sans Mono', monospace;
   font-size: 14px;
 }
-  a { color: @text-color-subtle }
+
+a {
+  color: var(--vscode-icon-foreground);
+  text-decoration: none;
+}
+a:hover {
+  color: var(--vscode-icon-foreground);
+  text-decoration: underline;
+}
 
 div.chlorine.console .items {
   margin-top: 5px;
   margin-bottom: 10px;
+}
+
+div.chlorine.error {
+  color: var(--vscode-errorForeground);
+}
+
+div.chlorine div.exception div.description {
+  font-weight: bold;
+}
+
+div.chlorine div.exception div.additional {
+  margin-left: 0;
+}
+
+div.chlorine div.exception div.stack {
+  opacity: 0.6;
 }
 
 div.chlorine.console .cell {
@@ -125,7 +148,7 @@ span.icon {
   </style>
 </head>
 <body>
-  <div>Hello, worlda!</div>
+  <div></div>
   <script type='text/javascript' src='" res-js-path "'></script>
 </body>
 </html>"))))
@@ -166,7 +189,10 @@ span.icon {
   (post-message! {:command stream :obj text}))
 
 (defn send-result! [result repl-flavor]
-  (post-message! {:command :result :obj (pr-str result) :repl repl-flavor}))
+  (let [txt (:as-text result)
+        norm-result {:as-text (cond-> txt (not (string? txt)) pr-str)
+                     :error (contains? result :error)}]
+    (post-message! {:command :result :obj (pr-str norm-result) :repl repl-flavor})))
 
 (defn clear-console! []
   (post-message! {:command :clear}))
