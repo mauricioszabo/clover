@@ -59,13 +59,13 @@
         :editor-data vs/get-editor-data
         :notify notify!})
       (then (fn [st]
-              (swap! state/state assoc :conn st
-                     (register-console!)
-                     (doseq [[key {:keys [command]}] (-> @st :editor/commands)]
-                       (aux/add-transient! (.. vscode
-                                               -commands
-                                               (registerCommand (str "clover." (name key))
-                                                                command)))))))))
+              (swap! state/state assoc :conn st)
+              (register-console!)
+              (doseq [[key {:keys [command]}] (-> @st :editor/commands)]
+                (aux/add-transient! (.. vscode
+                                        -commands
+                                        (registerCommand (str "clover." (name key))
+                                                         command))))))))
 
 (defn- find-shadow-port []
   (->> (folders)
