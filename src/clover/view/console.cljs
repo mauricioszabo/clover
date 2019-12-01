@@ -59,7 +59,7 @@
       (swap! out-state conj [stream text]))))
 
 (defn result [parsed-result repl]
-  (swap! out-state conj [:result (render/parse-result parsed-result repl)]))
+  (swap! out-state conj [:result (render/parse-result parsed-result repl (atom {}))]))
 
 (defn register-console! []
   (let [scrolled? (atom true)]
@@ -69,7 +69,7 @@
               div)))
 
 (def ^:private pending-evals (atom {}))
-(def ^:private post-message! (-> (js/acquireVsCodeApi) .-postMessage))
+(defonce ^:private post-message! (-> (js/acquireVsCodeApi) .-postMessage))
 
 (defrecord Evaluator [flavor]
   eval/Evaluator
@@ -84,16 +84,17 @@
 
 (defn- to-edn [string]
   (let [edn (edn/read-string {:default tagged-literal} string)
-        txt (:as-text edn)]
+        txt (:as-text edn)
+        key (if (:error edn) :error :result)]
 
-    (cond-> (dissoc edn :parsed?)
-            (contains? edn :result) (assoc :result txt)
-            (contains? edn :error) (assoc :error txt))))
+    (-> edn
+        (dissoc :parsed?)
+        (assoc key txt))))
 
 (defn- render-result [string-result repl-flavor]
   (let [repl (->Evaluator repl-flavor)
         result (to-edn string-result)]
-    (swap! out-state conj [:result (render/parse-result result repl)])))
+    (swap! out-state conj [:result (render/parse-result result repl (atom {}))])))
 
 (defn- send-response! [{:keys [id result]}]
   (let [callback (get @pending-evals id)]
