@@ -1,5 +1,6 @@
 (ns clover.vs
-  (:require ["vscode" :as vscode]))
+  (:require ["vscode" :as vscode]
+            [repl-tooling.editor-helpers :as h]))
 
 (defn info [text]
   (.. vscode -window (showInformationMessage text)))
@@ -29,9 +30,11 @@
    (let [document (. editor -document)
          sel (. editor -selection)
          start (. sel -start)
-         end (. sel -end)]
+         end (. sel -end)
+         start [(.-line start) (.-character start)]
+         end [(.-line end) (.-character end)]
+         end (cond-> end (not= start end) (update 1 dec))]
      {:editor editor
       :contents (.getText document)
       :filename (.-fileName document)
-      :range [[(.-line start) (.-character start)]
-              [(.-line end) (.-character end)]]})))
+      :range [start end]})))
