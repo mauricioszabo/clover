@@ -7,7 +7,7 @@
  :builds {:plugin {:target :node-library
                    :js-options {:js-provider :shadow
                                 :keep-native-requires true
-                                :keep-as-require #{"atom"}}
+                                :keep-as-require #{"vscode"}}
 
                    :compiler-options {:infer-externs :auto}
                    :exports {:activate clover.core/activate
