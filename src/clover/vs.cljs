@@ -14,7 +14,6 @@
 
 (defn choice [{:keys [message arguments]}]
   (let [mapped (->> arguments (map (juxt :value :key)) (into {}))]
-    (info (pr-str mapped))
     (.. vscode -window (showQuickPick (->> arguments (map :value) clj->js)
                                       #js {:placeHolder message})
         (then #(mapped %)))))
