@@ -31,23 +31,14 @@
 
 (defonce div (. js/document querySelector "div"))
 
-(defn- chlorine-elem []
-  (. div (querySelector "div.chlorine")))
-
 (defn- all-scrolled? []
-  (let [chlorine (chlorine-elem)
-        chlorine-height (.-scrollHeight chlorine)
-        parent-height (.. js/document (querySelector "body") -clientHeight)
-        offset (- chlorine-height parent-height)
-        scroll-pos (.-scrollTop chlorine)]
-    (prn :SCROLLED? chlorine-height parent-height offset scroll-pos
-         :ELEM chlorine)
-    (>= scroll-pos offset)))
+  (let [window-scroll-pos (+ (.. js/window -scrollY) (.. js/window -innerHeight) 1)
+        document-height (.. js/document (querySelector "body") -clientHeight)]
+    (>= window-scroll-pos document-height)))
 
 (defn- scroll-to-end! [scrolled?]
-  (let [chlorine (chlorine-elem)]
-    (when @scrolled?
-      (set! (.-scrollTop chlorine) (.-scrollHeight chlorine)))))
+  (when @scrolled?
+    (.scroll js/window 0 (.. js/document (querySelector "body") -clientHeight))))
 
 (defn clear []
   (reset! out-state []))
