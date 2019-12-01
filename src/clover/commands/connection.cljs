@@ -24,6 +24,7 @@
 
 (defn- disconnect! []
   (connection/disconnect!)
+  (some-> ^js @ui/view .dispose)
   (when-not (empty? @state/state)
     (aux/clear-transients!)
     (reset! state/state {})
