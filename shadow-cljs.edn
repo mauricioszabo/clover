@@ -4,8 +4,10 @@
  :dependencies [[repl-tooling "0.3.0-SNAPSHOT"]
                 [check "0.0.2-SNAPSHOT"]]
 
- :builds {
-          :plugin {:target :node-library
+ :builds {:plugin {:target :node-library
+                   :js-options {:js-provider :shadow
+                                :keep-native-requires true
+                                :keep-as-require #{"vscode"}}
 
                    :compiler-options {:infer-externs :auto}
                    :exports {:activate clover.core/activate

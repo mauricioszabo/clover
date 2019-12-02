@@ -1,0 +1,6 @@
+#!/bin/bash
+
+rm lib/main.js*
+rm lib/js view/js -R
+npx shadow-cljs release plugin browser --source-maps
+vsce package
