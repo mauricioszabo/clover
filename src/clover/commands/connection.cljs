@@ -83,5 +83,3 @@
                    (str "localhost:" (some-> (find-shadow-port) readFileSync)))
         (then extract-host-port)
         (then #(when % (connect-clj %))))))
-
-(. js/Promise resolve 10)
