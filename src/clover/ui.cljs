@@ -153,7 +153,7 @@ span.icon {
 </body>
 </html>"))))
 
-(defn- post-message! [message]
+(defn post-message! [message]
   (.. ^js @view -webview
       (postMessage (pr-str message))))
 
@@ -198,4 +198,3 @@ span.icon {
 
 (defn clear-console! []
   (post-message! {:command :clear}))
-{:foo 10}
