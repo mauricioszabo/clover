@@ -51,10 +51,10 @@
        host port
        {:on-stdout #(ui/send-output! :stdout %)
         :on-stderr #(ui/send-output! :stderr %)
-        :on-result #(ui/send-result! % :clj)
         :on-disconnect disconnect!
         :prompt vs/choice
         :get-config get-config
+        :on-eval #(ui/send-result! % :clj)
         ; :on-start-eval vs/info
         ; :on-eval vs/info
         :editor-data vs/get-editor-data

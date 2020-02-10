@@ -188,7 +188,8 @@ span.icon {
 (defn send-output! [stream text]
   (post-message! {:command stream :obj text}))
 
-(defn send-result! [result repl-flavor]
+(defn send-result! [{:keys [result]} repl-flavor]
+  ; (prn :OUT (-> result :result :as-text))
   (let [txt (:as-text result)
         norm-result {:as-text (cond-> txt (not (string? txt)) pr-str)
                      :error (contains? result :error)}]
