@@ -57,6 +57,8 @@
         :on-eval #(ui/send-result! % :clj)
         ; :on-start-eval vs/info
         ; :on-eval vs/info
+        :on-patch #(ui/post-message! {:command :patch
+                                      :obj %})
         :editor-data vs/get-editor-data
         :notify notify!})
       (then #(when-let [st %]
@@ -81,3 +83,5 @@
                    (str "localhost:" (some-> (find-shadow-port) readFileSync)))
         (then extract-host-port)
         (then #(when % (connect-clj %))))))
+
+(. js/Promise resolve 10)
