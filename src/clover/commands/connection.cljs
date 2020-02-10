@@ -61,12 +61,12 @@
         :notify notify!})
       (then #(when-let [st %]
                (swap! state/state assoc :conn st)
-               (register-console!)
                (doseq [[key {:keys [command]}] (-> @st :editor/commands)]
                  (aux/add-transient! (.. vscode
                                          -commands
                                          (registerCommand (str "clover." (name key))
-                                                          command))))))))
+                                                          command))))
+               (register-console!)))))
 
 (defn- find-shadow-port []
   (->> (folders)

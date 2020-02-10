@@ -50,6 +50,10 @@
 				"title": "Break Clojure Evaluation"
 			},
 			{
+				"command": "clover.doc-for-var",
+				"title": "Show Documentation for Var"
+			},
+			{
 				"command": "clover.connect-embedded",
 				"title": "Start Shadow-CLJS' ClojureScript REPL"
 			}
