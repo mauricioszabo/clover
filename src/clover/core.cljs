@@ -66,6 +66,16 @@
 
 (defn activate [^js ctx]
   (when ctx (reset! ui/curr-dir (.. ctx -extensionPath)))
+  (.. vscode -languages
+      (setLanguageConfiguration
+       "clojure"
+       (js->clj
+         {:wordPattern #"[^\s,#()\[\]{};\"\\\@']+"})))
+          ; :onEnterRules  [{:beforeText #".*"
+          ;                  :action {}
+          ;                  :indentAction (.. vscode -IndentAction -Outdent)
+          ;                  :removeText js/Number.MAX_VALUE}]})))
+              
   (aux/add-disposable! (.. vscode -commands
                            (registerCommand "extension.connectSocketRepl"
                                             conn/connect!)))

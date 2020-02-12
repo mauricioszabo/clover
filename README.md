@@ -77,9 +77,7 @@ To avoid conflicts, this plug-in does not register any keybindings. You can defi
 This plug-in should be considered "alpha state". Its still in the beginning, and the only reason it works for evaluation, autocomplete, and supports lots of Clojure implementations is because it re-uses most of the code from Chlorine.
 
 ### Known problems:
-Autocomplete can't find some suggestions. This could be a limitation of VSCode (that don't detect, for example, variables like `*clojure-version*` because of their special characters on the beginning)
-
-There's also some synchronization problems, so sometimes a restart of VSCode is necessary.
+Currently there are some synchronization problems, so sometimes a restart of VSCode is necessary.
 
 ## Related Projects:
 * [Chlorine](https://github.com/mauricioszabo/atom-chlorine)
