@@ -153,7 +153,7 @@ span.icon {
 </body>
 </html>"))))
 
-(defn- post-message! [message]
+(defn post-message! [message]
   (.. ^js @view -webview
       (postMessage (pr-str message))))
 
@@ -188,11 +188,13 @@ span.icon {
 (defn send-output! [stream text]
   (post-message! {:command stream :obj text}))
 
-(defn send-result! [result repl-flavor]
-  (let [txt (:as-text result)
-        norm-result {:as-text (cond-> txt (not (string? txt)) pr-str)
-                     :error (contains? result :error)}]
-    (post-message! {:command :result :obj (pr-str norm-result) :repl repl-flavor})))
+(defn send-result! [{:keys [result]} repl-flavor]
+  (let [norm-result (cond-> result
+                            (contains? result :result) (assoc :result true)
+                            (contains? result :error) (assoc :error true))]
+    (post-message! {:command :result 
+                    :obj (pr-str norm-result)
+                    :repl repl-flavor})))
 
 (defn clear-console! []
   (post-message! {:command :clear}))

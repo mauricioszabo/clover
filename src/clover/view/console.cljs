@@ -5,6 +5,7 @@
             [cljs.reader :as edn]
             [repl-tooling.eval :as eval]
             [clojure.core.async :as async :include-macros true]
+            [repl-tooling.editor-integration.connection :as conn]
             ["ansi_up" :default Ansi]))
 
 (defonce out-state (r/atom []))
@@ -92,17 +93,28 @@
     (callback result))
   (swap! pending-evals dissoc id))
 
+(defn- patch-result! [{:keys [id result]}]
+  (let [repl (->Evaluator :cljs)
+        norm {:result (:as-text result)
+              :as-text (:as-text result)}
+        results (->> @out-state
+                     (filter #(-> % first (= :result)))
+                     (map second))]
+    (doseq [result (conn/find-patch id results)]
+      (swap! result assoc :value (render/parse-result norm repl (atom {}))))))
+
 (defn main []
   (.. js/window
       (addEventListener "message"
                         (fn [message]
                           (let [{:keys [command obj repl]} (->> message
                                                                 .-data
-                                                                edn/read-string)]
+                                                                (edn/read-string {:default tagged-literal}))]
                             (case command
                               :stdout (append-text :stdout obj)
                               :stderr (append-text :stderr obj)
                               :result (render-result obj repl)
                               :eval-result (send-response! obj)
+                              :patch (patch-result! obj)
                               :clear (clear))))))
   (register-console!))

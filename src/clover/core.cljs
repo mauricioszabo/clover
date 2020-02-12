@@ -4,6 +4,7 @@
             [clover.state :as st]
             [clover.ui :as ui]
             [clover.commands.connection :as conn]
+            [repl-tooling.editor-integration.evaluation :as e-eval]
             [repl-tooling.features.definition :as definition]
             [repl-tooling.editor-helpers :as helpers]
             ["vscode" :as vscode :refer [Location Uri Position Range TextEdit]]
@@ -13,9 +14,13 @@
   (let [data (vs/get-document-data document position)
         [_ curr-var] (helpers/current-var (:contents data) (-> data :range first))
         [_ curr-ns] (helpers/ns-range-for (:contents data) (-> data :range first))
-        kind (some-> @st/state :conn deref :repl/info :kind)]
-    (when-let [repl (and (= kind :clj) (st/repl-for-aux))]
-      (.. (definition/find-var-definition repl curr-ns curr-var)
+        aux (-> @st/state :conn deref  :clj/aux)
+        repl (e-eval/repl-for (-> @st/state :conn deref :editor/callbacks)
+                              (:conn @st/state)
+                              (.. vscode -window -activeTextEditor -document -fileName)
+                              true)]
+    (when repl
+      (.. (definition/find-var-definition repl aux curr-ns curr-var)
           (then (fn [{:keys [file-name line]}]
                   (Location. (. Uri parse file-name) (Position. line 0))))))))
 

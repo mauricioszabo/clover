@@ -51,22 +51,24 @@
        host port
        {:on-stdout #(ui/send-output! :stdout %)
         :on-stderr #(ui/send-output! :stderr %)
-        :on-result #(ui/send-result! % :clj)
         :on-disconnect disconnect!
         :prompt vs/choice
         :get-config get-config
+        :on-eval #(ui/send-result! % :clj)
         ; :on-start-eval vs/info
         ; :on-eval vs/info
+        :on-patch #(ui/post-message! {:command :patch
+                                      :obj %})
         :editor-data vs/get-editor-data
         :notify notify!})
       (then #(when-let [st %]
                (swap! state/state assoc :conn st)
-               (register-console!)
                (doseq [[key {:keys [command]}] (-> @st :editor/commands)]
                  (aux/add-transient! (.. vscode
                                          -commands
                                          (registerCommand (str "clover." (name key))
-                                                          command))))))))
+                                                          command))))
+               (register-console!)))))
 
 (defn- find-shadow-port []
   (->> (folders)
