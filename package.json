@@ -55,6 +55,18 @@
 				"title": "Show Documentation for Var"
 			},
 			{
+				"command": "clover.run-tests-in-ns",
+				"title": "Run all tests in current namespace"
+			},
+			{
+				"command": "clover.run-test-for-var",
+				"title": "Run test for the current var"
+			},
+			{
+				"command": "clover.source-for-var",
+				"title": "Show source for the current var"
+			},
+			{
 				"command": "clover.connect-embedded",
 				"title": "Start Shadow-CLJS' ClojureScript REPL"
 			}
