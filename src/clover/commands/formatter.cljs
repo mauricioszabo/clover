@@ -1,34 +1,40 @@
 (ns clover.commands.formatter
-  (:require ["parinfer" :as par]))
+  (:require [clover.vs :as vs]
+            [clojure.string :as str]
+            [repl-tooling.editor-helpers :as helpers]
+            ["parinfer" :as par]
+            ["vscode" :as vscode :refer [Range TextEdit Position]]
+            [cljfmt.core :as format]))
 
-    ; let editor = vscode.window.activeTextEditor;
-    ; let pos = new vscode.Position(position.line, 0);
-    ; let indent = getIndent(getDocument(document).model.lineInputModel, getDocumentOffset(document, position), config.getConfig());
-    ; let delta = document.lineAt(position.line).firstNonWhitespaceCharacterIndex - indent;
-    ; if (delta > 0) {}
-    ;     //return [vscode.TextEdit.delete(new vscode.Range(pos, new vscode.Position(pos.line, delta)))];
-    ;     return editor.edit(edits => edits.delete(new vscode.Range(pos, new vscode.Position(pos.line, delta))), { undoStopAfter: false, undoStopBefore: false});
-    ;
-    ; else if (delta < 0) {}
-    ;     let str = "";
-    ;     while (delta++ < 0)
-    ;         str += " ";
-    ;     //return [vscode.TextEdit.insert(pos, str)];
-    ;     return editor.edit(edits => edits.insert(pos, str), { undoStopAfter: false, undoStopBefore: false})));
+(defn- spaces [n]
+  (->> n
+       range
+       (map (constantly " "))
+       (str/join "")))
+
+(defn- indent-idx [contents row col]
+  (let [bizarre-str (pr-str (str (rand) "-" (rand)))
+        [[[brow bcol]] block-txt] (helpers/block-for contents [row col])
+        splitted (str/split-lines block-txt)
+        diff-row (- row brow)]
+    (-> splitted
+        (update 0 #(str (spaces bcol) %))
+        (update diff-row #(str (subs % 0 col) bizarre-str (subs % col)))
+        (->> (str/join "\n"))
+        format/reformat-string
+        str/split-lines
+        (get diff-row)
+        (.indexOf bizarre-str))))
 
 (defn- format-on-type [document]
-  (prn :FORMATTING!))
-
-        ; const editor = vscode.window.activeTextEditor;
-        ; continueComment(editor, document, editor.selection.active).then(() => {})
-        ;     const pos = editor.selection.active;
-        ;     if (vscode.workspace.getConfiguration("calva.fmt").get("formatAsYouType")) {}
-        ;         if (vscode.workspace.getConfiguration("calva.fmt").get("newIndentEngine")) {}
-        ;             return formatter.indentPosition(pos, document);
-        ;          else {}
-        ;             try {}
-        ;                 return formatter.formatPosition(editor, true);
-        ;              catch (e) {}
-        ;                 return formatter.indentPosition(pos, document)));
+  (try
+    (let [{:keys [contents range]} (vs/get-editor-data)
+          [[srow scol] [erow ecol]] range
+          indent-idx (indent-idx contents srow scol)]
+      (if (< indent-idx scol)
+        #js [(.. TextEdit (delete (Range. srow indent-idx srow scol)))]
+        #js [(.. TextEdit (insert (Position. srow scol) (spaces (- indent-idx scol))))]))
+    (catch :default e
+      nil)))
 
 (def formatter #js {:provideOnTypeFormattingEdits format-on-type})
