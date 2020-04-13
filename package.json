@@ -12,8 +12,11 @@
 		"Other"
 	],
 	"activationEvents": [
-		"onLanguage:clojure",
-		"onCommand:extension.connectSocketRepl"
+    "onLanguage:clojure",
+    "workspaceContains:**/project.clj",
+    "workspaceContains:**/shadow-cljs.edn",
+    "workspaceContains:**/deps.edn",
+    "onCommand:extension.connectSocketRepl"
 	],
 	"main": "./extension.js",
 	"contributes": {
