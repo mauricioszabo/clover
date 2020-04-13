@@ -2,9 +2,8 @@
   (:require [clover.vs :as vs]
             [clojure.string :as str]
             [repl-tooling.editor-helpers :as helpers]
-            ["parinfer" :as par]
-            ["vscode" :as vscode :refer [Range TextEdit Position]]
-            [cljfmt.core :as format]))
+            [cljfmt.core :as format]
+            ["vscode" :as vscode :refer [Range TextEdit Position]]))
 
 (defn- spaces [n]
   (->> n
