@@ -8,7 +8,7 @@
             [repl-tooling.editor-integration.evaluation :as e-eval]
             [repl-tooling.features.definition :as definition]
             [repl-tooling.editor-helpers :as helpers]
-            ["vscode" :as vscode :refer [Location Uri Position Range TextEdit]]
+            ["vscode" :as vscode :refer [Location Uri Position Range]]
             ["path" :as path]))
 
 (defn- var-definition [document position]
