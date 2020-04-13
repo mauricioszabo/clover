@@ -1,5 +1,6 @@
 (ns clover.core
   (:require [clover.aux :as aux :include-macros true]
+            [clover.commands.formatter :as formatter]
             [clover.vs :as vs]
             [clover.state :as st]
             [clover.ui :as ui]
@@ -64,6 +65,10 @@
         (then clj->js)
         (catch (constantly #js [])))))
 
+(def ^:private document-selector (clj->js [{:scheme "file" :language "clojure"}
+                                           {:scheme "jar" :language "clojure"}
+                                           {:scheme "untitled" :language "clojure"}]))
+
 (defn activate [^js ctx]
   (when ctx (reset! ui/curr-dir (.. ctx -extensionPath)))
   (.. vscode -languages
@@ -75,7 +80,13 @@
           ;                  :action {}
           ;                  :indentAction (.. vscode -IndentAction -Outdent)
           ;                  :removeText js/Number.MAX_VALUE}]})))
-              
+
+  (aux/add-disposable! (.. vscode -languages
+                           (registerOnTypeFormattingEditProvider document-selector
+                                                                 formatter/formatter
+                                                                 "\r"
+                                                                 "\n")))
+
   (aux/add-disposable! (.. vscode -commands
                            (registerCommand "extension.connectSocketRepl"
                                             conn/connect!)))
