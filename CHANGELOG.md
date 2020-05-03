@@ -1,5 +1,20 @@
 # Change Log
 
+## 0.1.0
+- Fixed connection for other Clojure implementations like Clojerl, Joker, etc.
+- Interactive results
+- First support for `info` command, if "Orchard" is on classpath
+- Code refactoring, fixed issues
+- Loading tests on full refresh
+- Fixed parsing of namespaces with metadata, and quotes (the kind you get when using clj-kondo)
+- Load-file now prints the stacktrace when it fails to load
+- Fixed paths on Windows, so goto var definition and clicking on stacktraces will work
+- Simple fix for nREPL on slower sockets
+- Alpha support for nREPL
+- Fixed connection with Babashka
+- Fixed issue with GOTO Var Definition when the current file's full path is too long.
+
+
 ## 0.0.7
 - Support for nREPL
 - Indentation engine (alpha)

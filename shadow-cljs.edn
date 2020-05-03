@@ -1,8 +1,9 @@
 ;; shadow-cljs configuration
 {:source-paths ["src" "repl-tooling/src" "repl-tooling/resources"]
 
- :dependencies [[repl-tooling "0.4.3"]
+ :dependencies [[repl-tooling "0.4.4-SNAPSHOT"]
                 [org.rksm/suitable "0.3.2"]
+                [compliment "0.4.0-SNAPSHOT"]
                 [cljfmt "0.6.7"]]
 
  :builds {:plugin {:target :node-library
