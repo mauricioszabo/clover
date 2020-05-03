@@ -62,13 +62,11 @@
   (.. js/window
       (addEventListener "message"
                         (fn [message]
-                          (prn :MESS (.-data message))
                           (let [{:keys [command obj repl]} (->> message
                                                                 .-data
                                                                 (edn/read-string {:default tagged-literal}))]
                             (case command
-                              :stdout (do 
-                                        (console/stdout obj))
+                              :stdout (console/stdout obj)
                               :stderr (console/stderr obj)
                               :result (render-result obj repl)
                               :eval-result (send-response! obj)

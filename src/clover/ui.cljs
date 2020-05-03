@@ -190,7 +190,6 @@ span.icon {
 </html>"))))
 
 (defn post-message! [message]
-  (prn :MESSAGE message)
   (.. ^js @view -webview
       (postMessage (pr-str message))))
 
