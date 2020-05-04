@@ -23,7 +23,7 @@
   src: url(" res-font-path ");
 }
 
-div.chlorine.console {
+div.repl-tooling.console {
   width: 100%;
   height: 100%;
   color: var(--vscode-editor-foreground);
@@ -41,28 +41,28 @@ a:hover {
   text-decoration: underline;
 }
 
-div.chlorine.console .items {
+div.repl-tooling.console .items {
   margin-top: 5px;
   margin-bottom: 10px;
 }
 
-div.chlorine.error {
+div.repl-tooling.error {
   color: var(--vscode-errorForeground);
 }
 
-div.chlorine div.exception div.description {
+div.repl-tooling div.exception div.description {
   font-weight: bold;
 }
 
-div.chlorine div.exception div.additional {
+div.repl-tooling div.exception div.additional {
   margin-left: 0;
 }
 
-div.chlorine div.exception div.stack {
+div.repl-tooling div.exception div.stack {
   opacity: 0.6;
 }
 
-div.chlorine.console .cell {
+div.repl-tooling.console .cell {
   transition: all 0.1s ease;
   position: relative;
   top: 0;
@@ -70,7 +70,7 @@ div.chlorine.console .cell {
   white-space: pre-wrap;
   word-wrap: break-word;
 }
-div.chlorine.console .cell .gutter {
+div.repl-tooling.console .cell .gutter {
   width: 2em;
   height: 100%;
   float: left;
@@ -79,7 +79,7 @@ div.chlorine.console .cell .gutter {
   -webkit-user-select: none;
 }
 
-div.chlorine.console .cell .gutter .icon {
+div.repl-tooling.console .cell .gutter .icon {
   transition: all 0.1s ease;
 }
 
@@ -116,7 +116,7 @@ span.icon {
 }
 
 /* RESULTS RENDERER */
-.chlorine.result a.chevron {
+.repl-tooling.result a.chevron {
   font-family: 'Octicons Regular';
   font-weight: bold;
   font-size: 16px;
@@ -124,26 +124,62 @@ span.icon {
   width: 0px;
   height: 15px;
 }
-.chlorine.result a.chevron.closed::before {
+.repl-tooling.result a.chevron.closed::before {
   content: \"\\f078\";
 }
 
-.chlorine.result a.chevron.opened::before {
+.repl-tooling.result a.chevron.opened::before {
   content: \"\\f0a3\";
 }
 
-.chlorine.result div {
+.repl-tooling.result div {
   display: flex;
   white-space: pre;
 }
 
-.chlorine.result div.browseable,div.row {
+/* Interactive Results */
+.repl-tooling.result div.browseable,div.row {
   flex-direction: column;
 }
-.chlorine.result div .children {
+.repl-tooling.result div .children {
   flex-direction: column;
   margin-left: 1.5em;
 }
+.repl-tooling.result div div.error {
+  color: @text-color-error;
+}
+.repl-tooling.result div div.rows {
+  display: flex;
+  flex-direction: column;
+}
+.repl-tooling.result div div.cols {
+  display: flex;
+  flex-direction: row;
+}
+.repl-tooling.result div div.title {
+  font-weight: 800;
+}
+.repl-tooling.result div div.pre {
+  white-space: pre-wrap;
+}
+.repl-tooling.result div div.space {
+  opacity: 0.1;
+  margin: 0.6em;
+}
+.repl-tooling.result div select {
+}
+.repl-tooling.result div button {
+  padding-left: 0.5em;
+  padding-right: 0.5em;
+  border-width: 1px;
+  border-radius: 3px;
+}
+.repl-tooling.result div input[type=text] {
+  border: 0px @syntax-selection-color;
+  border-radius: 1px;
+  border: 0px solid @pane-item-border-color;
+}
+
 
   </style>
 </head>
