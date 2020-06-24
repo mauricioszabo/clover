@@ -1,5 +1,11 @@
 # Change Log
 
+## FUTURE
+- More commands comming from Orchard:
+  - find-usages
+  - clojure-doc-for-var
+
+
 ## 0.1.1
 - Fixes on nREPL imports for Orchard, Compliment, etc (https://github.com/mauricioszabo/atom-chlorine/issues/191)
 - Forward-finding namespaces if a NS form was not found before the cursor (fixes https://github.com/mauricioszabo/atom-chlorine/issues/193)
@@ -7,9 +13,6 @@
 - Performance improvement while parsing Clojure code
 - Fixed error trying to connect to ClojureScript socket REPLs
 - Fixed core Clojerl exception
-- More commands comming from Orchard:
-  - find-usages
-  - clojure-doc-for-var
 
 ## 0.1.0
 - Fixed connection for other Clojure implementations like Clojerl, Joker, etc.
