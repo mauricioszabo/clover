@@ -15,9 +15,8 @@
   (let [data (vs/get-document-data document position)
         [_ curr-var] (helpers/current-var (:contents data) (-> data :range first))
         [_ curr-ns] (helpers/ns-range-for (:contents data) (-> data :range first))
-        aux (-> @st/state :conn deref  :clj/aux)
-        repl (e-eval/repl-for (-> @st/state :conn deref :editor/callbacks)
-                              (:conn @st/state)
+        aux (some-> @st/state :conn deref :clj/aux)
+        repl (e-eval/repl-for (:conn @st/state)
                               (.. vscode -window -activeTextEditor -document -fileName)
                               true)]
     (when repl
