@@ -26,6 +26,7 @@
   (connection/disconnect!)
   (some-> ^js @ui/view .dispose)
   (when-not (empty? @state/state)
+    (aux/clear-commands!)
     (aux/clear-transients!)
     (reset! state/state {})
     (vs/info "Disconnected from REPLs")))
@@ -37,7 +38,11 @@
 
 (defn- get-config []
   {:project-paths (folders)
-   :eval-mode :prefer-clj})
+   :eval-mode (-> vscode
+                  .-workspace
+                  (.getConfiguration "clover")
+                  .-repl
+                  keyword)})
 
 (defn- notify! [{:keys [type title message]}]
   (let [txt (cond-> title message (str ": " message))]
@@ -45,6 +50,25 @@
       :info (vs/info txt)
       :warning (vs/warn txt)
       :error (vs/error txt))))
+
+(defn- decide-command [key command experimental?]
+  (let [old-cmd (:old-command command)
+        new-cmd (:command command)]
+
+    (aux/add-command!
+     (.. vscode
+         -commands
+         (registerCommand (str "clover." (name key))
+                          (fn []
+                            (if (and old-cmd (not= true experimental?))
+                              (old-cmd)
+                              (new-cmd))))))))
+
+(defn- register-commands! [commands]
+  (let [experimental? (.. vscode -workspace (getConfiguration "clover") -experimental)]
+    (aux/clear-commands!)
+    (doseq [[k command] commands]
+      (decide-command k command experimental?))))
 
 (defn- connect-clj [[host port]]
   (.. (connection/connect!
@@ -55,18 +79,17 @@
         :prompt vs/choice
         :get-config get-config
         :on-eval #(ui/send-result! % :clj)
-        ; :on-start-eval vs/info
-        ; :on-eval vs/info
         :on-patch #(ui/post-message! {:command :patch :obj %})
         :editor-data vs/get-editor-data
+        :register-commands register-commands!
         :notify notify!})
       (then #(when-let [st %]
                (swap! state/state assoc :conn st)
-               (doseq [[key {:keys [command]}] (-> @st :editor/commands)]
-                 (aux/add-transient! (.. vscode
-                                         -commands
-                                         (registerCommand (str "clover." (name key))
-                                                          command))))
+               ; (doseq [[key {:keys [command]}] (-> @st :editor/commands)]
+               ;   (aux/add-transient! (.. vscode
+               ;                           -commands
+               ;                           (registerCommand (str "clover." (name key))
+               ;                                            command))))
                (register-console!)))))
 
 (defn- find-shadow-port []

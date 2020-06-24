@@ -18,3 +18,12 @@
   (doseq [cmd @transient-cmds]
     (.dispose ^js cmd))
   (reset! transient-cmds []))
+
+(def ^:private commands (atom []))
+(defn add-command! [transient]
+  (swap! commands conj transient))
+
+(defn clear-commands! []
+  (doseq [cmd @commands]
+    (.dispose ^js cmd))
+  (reset! commands []))
