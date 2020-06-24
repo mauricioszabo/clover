@@ -1,7 +1,6 @@
 (ns clover.view.console
   (:require [repl-tooling.editor-integration.renderer.console :as console]
             [repl-tooling.editor-integration.renderer :as render]
-            [repl-tooling.editor-integration.connection :as conn]
             [repl-tooling.eval :as eval]
             [clojure.edn :as edn]
             [reagent.dom :as rdom]))
@@ -48,6 +47,19 @@
     (callback result))
   (swap! pending-evals dissoc id))
 
+(defn- find-patch [id maybe-coll]
+  (let [elem (if (instance? reagent.ratom/RAtom maybe-coll)
+               (dissoc @maybe-coll :editor-state :repl)
+               maybe-coll)]
+    (if (and (instance? render/Patchable elem)
+             (= id (:id elem)))
+      maybe-coll
+      (when (coll? elem)
+        (->> elem
+             (map #(find-patch id %))
+             flatten
+             (filter identity))))))
+
 (defn- patch-result! [{:keys [id result]}]
   (let [repl (->Evaluator :cljs)
         norm {:result (:as-text result)
@@ -55,7 +67,7 @@
         results (->> @console/out-state
                      (filter #(-> % first (= :result)))
                      (map second))]
-    (doseq [result (conn/find-patch id results)]
+    (doseq [result (find-patch id results)]
       (swap! result assoc :value (render/parse-result norm repl (atom {}))))))
 
 (defn main []

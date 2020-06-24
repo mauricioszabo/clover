@@ -4,10 +4,24 @@
 	"description": "Socket REPL development for your editor",
 	"publisher": "mauricioszabo",
 	"repository": "https://github.com/mauricioszabo/clover/",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"engines": {
 		"vscode": "^1.38.0"
 	},
+	"keywords": [
+		"clojure",
+		"clojurescript",
+		"clojureclr",
+		"clojerl",
+		"babashka",
+		"lumo",
+		"plank",
+		"joker",
+		"repl",
+		"interactive",
+		"socket repl",
+		"nrepl"
+	],
 	"categories": [
 		"Other"
 	],
@@ -101,30 +115,30 @@
 				"path": "./clojure.tmLanguage.json"
 			}
 		],
-    "configuration": [
-      {
-        "type": "object",
-        "title": "Clover",
-        "properties": {
-          "clover.experimental": {
-            "type": "boolean",
-            "description": "Enable experimental, and possible unstable, features?",
-            "default": false
-          },
-          "clover.repl": {
-            "type": "string",
-            "description": "Should we evaluate Clojure, or ClojureScript?",
-            "default": "prefer-clj",
-            "enum": [
-              "prefer-clj",
-              "prefer-cljs",
-              "clj",
-              "cljs"
-            ]
-          }
-        }
-	    }
-    ],
+		"configuration": [
+			{
+				"type": "object",
+				"title": "Clover",
+				"properties": {
+					"clover.experimental": {
+						"type": "boolean",
+						"description": "Enable experimental, and possible unstable, features?",
+						"default": false
+					},
+					"clover.repl": {
+						"type": "string",
+						"description": "Should we evaluate Clojure, or ClojureScript?",
+						"default": "prefer-clj",
+						"enum": [
+							"prefer-clj",
+							"prefer-cljs",
+							"clj",
+							"cljs"
+						]
+					}
+				}
+			}
+		],
 		"configurationDefaults": {
 			"[clojure]": {
 				"editor.wordSeparators": "\t ()\"':,;~@#$%^&{}[]`",
@@ -145,9 +159,8 @@
 	},
 	"dependencies": {
 		"ansi_up": "^4.0.4",
-		"create-react-class": "^15.6.3",
-		"react": "^16.13.1",
-		"react-dom": "^16.13.1"
+		"react": "16.13.0",
+		"react-dom": "16.13.0"
 	},
 	"__metadata": {
 		"id": "46228898-6f2d-4345-b0a1-110cecdc9866",
