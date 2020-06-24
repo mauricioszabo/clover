@@ -9,11 +9,11 @@
 (defn register-console! []
   (let [scrolled? (atom true)]
     (rdom/render [(with-meta console/console-view
-                 {:get-snapshot-before-update #(reset! scrolled? (console/all-scrolled?))
-                  :component-did-update #(console/scroll-to-end! scrolled?)})]
+                    {:get-snapshot-before-update #(reset! scrolled? (console/all-scrolled?))
+                     :component-did-update #(console/scroll-to-end! scrolled?)})]
                  console/div)
-    (.. js/document 
-        (querySelector "div") 
+    (.. js/document
+        (querySelector "div")
         (replaceWith console/div))))
 
 (def ^:private pending-evals (atom {}))
