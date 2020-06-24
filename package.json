@@ -101,6 +101,30 @@
 				"path": "./clojure.tmLanguage.json"
 			}
 		],
+    "configuration": [
+      {
+        "type": "object",
+        "title": "Clover",
+        "properties": {
+          "clover.experimental": {
+            "type": "boolean",
+            "description": "Enable experimental, and possible unstable, features?",
+            "default": false
+          },
+          "clover.repl": {
+            "type": "string",
+            "description": "Should we evaluate Clojure, or ClojureScript?",
+            "default": "prefer-clj",
+            "enum": [
+              "prefer-clj",
+              "prefer-cljs",
+              "clj",
+              "cljs"
+            ]
+          }
+        }
+	    }
+    ],
 		"configurationDefaults": {
 			"[clojure]": {
 				"editor.wordSeparators": "\t ()\"':,;~@#$%^&{}[]`",
