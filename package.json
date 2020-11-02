@@ -6,7 +6,7 @@
 	"repository": "https://github.com/mauricioszabo/clover/",
 	"version": "0.1.1",
 	"engines": {
-		"vscode": "^1.38.0"
+		"vscode": "^1.50.0"
 	},
 	"keywords": [
 		"clojure",
@@ -34,58 +34,74 @@
 	],
 	"main": "./extension.js",
 	"contributes": {
+    "taskDefinitions": [
+      {
+        "type": "clover",
+        "required": ["command"],
+				"properties": {
+					"command": {
+						"type": "string",
+						"description": "The registered custom command to be executed"
+				  }
+        }
+      }
+    ],
 		"commands": [
 			{
 				"command": "extension.connectSocketRepl",
-				"title": "Connect Socket REPL"
+				"title": "Clover: Connect Socket REPL"
 			},
 			{
 				"command": "clover.evaluate-block",
-				"title": "Evaluate current block of code"
+				"title": "Clover: Evaluate current block of code"
 			},
 			{
 				"command": "clover.evaluate-top-block",
-				"title": "Evaluate current top-block of code"
+				"title": "Clover: Evaluate current top-block of code"
 			},
 			{
 				"command": "clover.evaluate-selection",
-				"title": "Evaluate current selection of code"
+				"title": "Clover: Evaluate current selection of code"
 			},
 			{
 				"command": "clover.clear-console",
-				"title": "Clear Clojure console"
+				"title": "Clover: Clear Clojure console"
 			},
 			{
 				"command": "clover.disconnect",
-				"title": "Disconnect all REPLs"
+				"title": "Clover: Disconnect all REPLs"
 			},
 			{
 				"command": "clover.load-file",
-				"title": "Load File in current REPL"
+				"title": "Clover: Load File in current REPL"
 			},
 			{
 				"command": "clover.break-evaluation",
-				"title": "Break Clojure Evaluation"
+				"title": "Clover: Break Clojure Evaluation"
 			},
 			{
 				"command": "clover.doc-for-var",
-				"title": "Show Documentation for Var"
+				"title": "Clover: Show Documentation for Var"
 			},
 			{
 				"command": "clover.run-tests-in-ns",
-				"title": "Run all tests in current namespace"
+				"title": "Clover: Run all tests in current namespace"
 			},
 			{
 				"command": "clover.run-test-for-var",
-				"title": "Run test for the current var"
+				"title": "Clover: Run test for the current var"
 			},
 			{
 				"command": "clover.source-for-var",
-				"title": "Show source for the current var"
+				"title": "Clover: Show source for the current var"
 			},
 			{
 				"command": "clover.connect-embedded",
-				"title": "Start Shadow-CLJS' ClojureScript REPL"
+				"title": "Clover: Start Shadow-CLJS' ClojureScript REPL"
+			},
+			{
+				"command": "clover.open-config",
+				"title": "Clover: Open config file"
 			}
 		],
 		"languages": [
