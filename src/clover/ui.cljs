@@ -14,9 +14,7 @@
 (defn- do-render-console! [^js webview curr-dir]
   (let [js-path (. path join curr-dir "view" "js" "main.js")
         font-path (. path join curr-dir "view" "octicons.ttf")
-        ; res-js-path (.. Uri (file js-path) (with #js {:scheme "vscode-resource"}))
         res-js-path (.. webview -webview (asWebviewUri (. Uri file js-path)))
-        ; res-font-path (.. Uri (file font-path) (with #js {:scheme "vscode-resource"}))
         res-font-path (.. webview -webview (asWebviewUri (. Uri file font-path)))]
     (set! (.. webview -webview -html) (str "<html>
 <head>
