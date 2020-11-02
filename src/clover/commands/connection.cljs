@@ -17,13 +17,13 @@
     (new (. vscode -CustomExecution)
       (fn [_]
         #js {:onDidClose (.-event emitter)
-             :onDidWrite prn
-             :close prn
-             :handleInput prn
+             :onDidWrite identity
+             :close identity
+             :handleInput identity
              :open (fn [& _]
                      (command)
                      (.fire ^js emitter))
-             :setDimensions prn}))))
+             :setDimensions identity}))))
 
 (defn- create-task [command-key command-name function]
   (doto (new Task
