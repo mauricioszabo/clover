@@ -1,5 +1,6 @@
 (ns clover.ui
-  (:require [cljs.reader :as edn]
+  (:require [clojure.edn :as edn]
+            [promesa.core :as p]
             [repl-tooling.editor-helpers :as helpers]
             [repl-tooling.editor-integration.connection :as connection]
             [repl-tooling.eval :as eval]
@@ -13,10 +14,15 @@
 (defn- do-render-console! [^js webview curr-dir]
   (let [js-path (. path join curr-dir "view" "js" "main.js")
         font-path (. path join curr-dir "view" "octicons.ttf")
-        res-js-path (.. Uri (file js-path) (with #js {:scheme "vscode-resource"}))
-        res-font-path (.. Uri (file font-path) (with #js {:scheme "vscode-resource"}))]
+        ; res-js-path (.. Uri (file js-path) (with #js {:scheme "vscode-resource"}))
+        res-js-path (.. webview -webview (asWebviewUri (. Uri file js-path)))
+        ; res-font-path (.. Uri (file font-path) (with #js {:scheme "vscode-resource"}))
+        res-font-path (.. webview -webview (asWebviewUri (. Uri file font-path)))]
     (set! (.. webview -webview -html) (str "<html>
 <head>
+  <meta http-equiv=\"Content-Security-Policy\" content=\"font-src "
+                                           res-font-path
+                                           ";\">
   <style>
 @font-face {
   font-family: 'Octicons Regular';
@@ -201,9 +207,18 @@ span.icon {
                      (post-message! {:command :eval-result
                                      :obj {:result result :id id}})))))
 
-(defn- handle-message [{:keys [op args]}]
-  (case op
-    :eval-code (evaluate! args)))
+(defn- resolve-result! [id call cmd args]
+  (p/let [result (apply call cmd args)]
+    (post-message! {:command :call-result
+                    :obj {:result result :id id}})))
+
+(defn- handle-message [{:keys [op args cmd id]}]
+  (when-let [editor-state (-> @st/state :conn)]
+    (let [{:keys [run-callback run-feature]} @editor-state]
+      (case op
+        :eval-code (evaluate! args)
+        :run-callback (resolve-result! id run-callback cmd args)
+        :run-feature (resolve-result! id run-feature cmd args)))))
 
 (defn- listen-to-events! [^js view]
   (.. view (onDidDispose connection/disconnect!))
@@ -218,6 +233,12 @@ span.icon {
                                          #js {:enableScripts true
                                               :retainContextWhenHidden true
                                               :localResourceRoots #js [res-path]})))
+                                              ; :portMapping #js
+                                              ; [
+                                              ;  #js {
+                                              ;        :extensionHostPort 9630
+                                              ;        :webviewPort 9630}]})))
+
     (do-render-console! @view @curr-dir)
     (listen-to-events! @view)))
 
@@ -228,7 +249,7 @@ span.icon {
   (let [norm-result (cond-> result
                             (contains? result :result) (assoc :result true)
                             (contains? result :error) (assoc :error true))]
-    (post-message! {:command :result 
+    (post-message! {:command :result
                     :obj (pr-str norm-result)
                     :repl repl-flavor})))
 
