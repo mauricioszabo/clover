@@ -47,15 +47,30 @@
     (post-message! (pr-str {:op op :cmd cmd :args args :id id}))
     prom))
 
+(defn- run-call-args! [callback]
+  (fn [ & args] (run-call! :run-callback callback args)))
+
 (def editor-state
   {:run-callback (fn [cmd & args] (run-call! :run-callback cmd args))
    :run-feature (fn [cmd & args] (run-call! :run-feature cmd args))
-   :editor/callbacks {:file-exists (fn [ & args]
-                                     (run-call! :run-callback :file-exists args))
-                      :read-file (fn [ & args]
-                                     (run-call! :run-callback :read-file args))
-                      :open-editor (fn [ & args]
-                                     (run-call! :run-callback :open-editor args))}})
+   :editor/callbacks {:file-exists (run-call-args! :file-exists)
+                      :read-file (run-call-args! :read-file)
+                      :open-editor (run-call-args! :open-editor)
+                      :config-file-path (run-call-args! :config-file-path)
+                      :register-commands (run-call-args! :register-commands)
+                      :on-start-eval (run-call-args! :on-start-eval)
+                      :on-eval (run-call-args! :on-eval)
+                      :editor-data (run-call-args! :editor-data)
+                      :notify (run-call-args! :notify)
+                      :get-config (run-call-args! :get-config)
+                      :prompt (run-call-args! :prompt)
+                      :on-copy (run-call-args! :on-copy)
+                      :on-stdout (run-call-args! :on-stdout)
+                      :on-stderr (run-call-args! :on-stderr)
+                      :on-result (run-call-args! :on-result)
+                      :get-rendered-results (run-call-args! :get-rendered-results)
+                      :on-patch (run-call-args! :on-patch)
+                      :on-disconnect (run-call-args! :on-disconnect)}})
 
 (defn- render-result [string-result repl-flavor]
   (let [repl (->Evaluator repl-flavor)
