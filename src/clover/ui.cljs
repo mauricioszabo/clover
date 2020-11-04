@@ -150,7 +150,7 @@ span.icon {
   margin-left: 1.5em;
 }
 .repl-tooling.result div div.error {
-  color: @text-color-error;
+  color: var(--vscode-errorForeground);
 }
 .repl-tooling.result div div.rows {
   display: flex;
