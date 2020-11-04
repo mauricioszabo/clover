@@ -1,6 +1,6 @@
 #!/bin/bash
 
+npm install
 rm lib/main.js*
 rm lib/js view/js -R
-npx shadow-cljs release plugin browser --source-maps
-vsce package
+npx shadow-cljs release plugin browser && vsce package
