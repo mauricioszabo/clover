@@ -133,8 +133,18 @@
         (swap! custom-commands assoc k command)))))
 
 (defn- open-editor [{:keys [file-name line column]}]
-  (p/let [doc (.. vscode -workspace (openTextDocument file-name))]
-    (.. vscode -window (showTextDocument doc))))
+  (p/let [doc (.. vscode -workspace (openTextDocument file-name))
+          editor (.. vscode
+                     -window
+                     (showTextDocument doc #js {:viewColumn (.. vscode -ViewColumn -One)
+                                                :preview true}))
+
+          Sel (.. vscode -Selection)
+          selection (new Sel
+                      (or line 0) (or column 0)
+                      (or line 0) (or column 0))]
+    (aset editor "selection" selection)
+    (.revealRange ^js editor selection)))
 
 (defn- connect-clj [[host port]]
   (let [config-file (path/join (.homedir os) ".config" "clover" "config.cljs")]
