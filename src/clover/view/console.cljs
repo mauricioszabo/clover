@@ -1,6 +1,7 @@
 (ns clover.view.console
   (:require [repl-tooling.editor-integration.renderer.console :as console]
             [repl-tooling.editor-integration.renderer :as render]
+            [repl-tooling.editor-integration.configs :as config]
             [repl-tooling.eval :as eval]
             [promesa.core :as p]
             [clojure.edn :as edn]
@@ -56,8 +57,8 @@
    :editor/callbacks {:file-exists (run-call-args! :file-exists)
                       :read-file (run-call-args! :read-file)
                       :open-editor (run-call-args! :open-editor)
-                      :config-file-path (run-call-args! :config-file-path)
-                      :register-commands (run-call-args! :register-commands)
+                      ; :config-file-path (run-call-args! :config-file-path)
+                      ; :register-commands (run-call-args! :register-commands)
                       :on-start-eval (run-call-args! :on-start-eval)
                       :on-eval (run-call-args! :on-eval)
                       :editor-data (run-call-args! :editor-data)
@@ -69,8 +70,7 @@
                       :on-stderr (run-call-args! :on-stderr)
                       :on-result (run-call-args! :on-result)
                       :get-rendered-results (run-call-args! :get-rendered-results)
-                      :on-patch (run-call-args! :on-patch)
-                      :on-disconnect (run-call-args! :on-disconnect)}})
+                      :on-patch (run-call-args! :on-patch)}})
 
 (defn- render-result [string-result repl-flavor]
   (let [repl (->Evaluator repl-flavor)
@@ -125,4 +125,5 @@
                               :patch (patch-result! obj)
                               :clear (console/clear)
                               :call-result (resolve-prom! obj))))))
+  (config/register-custom-tags! (atom editor-state))
   (register-console!))
