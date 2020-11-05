@@ -43,7 +43,7 @@ Then, you connect Clover with the port using the command _Connect Clojure Socket
 When connected, it'll try to load `compliment` (for autocomplete, falling back to a "simpler" autocomplete if not present). Then you can evaluate code on it.
 
 ### Custom Commands
-Exactly as in Chlorine, [there's support for Custom Commands](https://github.com/mauricioszabo/atom-chlorine/blob/master/docs/extending.md). Please follow the link for more explanation, but the idea is that, after connecting to a REPL, you run the command `Clover: Open config file" and then register your custom commands there.
+Exactly as in Chlorine, [there's support for Custom Commands](https://github.com/mauricioszabo/atom-chlorine/blob/master/docs/extending.md). Please follow the link for more explanation, but the idea is that, after connecting to a REPL, you run the command `Clover: Open config file" and then register your custom commands there. Please notice that "custom tags" is **not supported**, and probably never will unless VSCode makes its API better - the only custom tags supported are `:div/clj` and `:div/ansi` (the first accepts a Clojure data structure and uses the Clover renderer to render it, the second accepts a string with ANSI codes and color then accordingly).
 
 Because of limitations of VSCode, you will **not see** custom commands on the command palette - they are registered as Tasks. So you'll run the command "Tasks: Run Task" and then choose "Clover". There, the custom commands will be presented.
 
