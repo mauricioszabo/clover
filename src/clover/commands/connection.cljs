@@ -27,10 +27,10 @@
 
 (defn- create-task [command-key command-name function]
   (doto (new Task
-          #js {:type "clover" :command (name command-key)}
+          #js {:type "Clover" :command (name command-key)}
           (.. vscode -TaskScope -Workspace)
           command-name
-          "clover"
+          "Clover"
           (create-pseudo-terminal function))
         (aset "presentationOptions"
               #js {:reveal (.. vscode -TaskRevealKind -Never)
@@ -45,11 +45,6 @@
                                    (create-task k (:name v) (:command v))))
                             clj->js))
        :resolveTask (fn [_ _])})
-
-(aux/add-disposable!
-  (.. vscode -tasks
-      (registerTaskProvider "clover"
-                            provider)))
 
 (defn- extract-host-port [txt]
   (let [[host port] (str/split txt #":")

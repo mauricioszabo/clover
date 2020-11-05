@@ -80,24 +80,27 @@
           ;                  :indentAction (.. vscode -IndentAction -Outdent)
           ;                  :removeText js/Number.MAX_VALUE}]})))
 
-  (aux/add-disposable! (.. vscode -languages
-                           (registerOnTypeFormattingEditProvider document-selector
-                                                                 formatter/formatter
-                                                                 "\r"
-                                                                 "\n")))
+  (aux/add-disposable!
+    (.. vscode -tasks (registerTaskProvider "Clover" conn/provider)))
 
-  (aux/add-disposable! (.. vscode -commands
-                           (registerCommand "extension.connectSocketRepl"
-                                            conn/connect!)))
-  (aux/add-disposable! (.. vscode -languages
-                           (registerDefinitionProvider
-                            "clojure"
-                            #js {:provideDefinition var-definition})))
+ (aux/add-disposable! (.. vscode -languages
+                          (registerOnTypeFormattingEditProvider document-selector
+                                                                formatter/formatter
+                                                                "\r"
+                                                                "\n")))
 
-  (aux/add-disposable! (.. vscode -languages
-                           (registerCompletionItemProvider
-                            "clojure"
-                            #js {:provideCompletionItems autocomplete}))))
+ (aux/add-disposable! (.. vscode -commands
+                          (registerCommand "extension.connectSocketRepl"
+                                           conn/connect!)))
+ (aux/add-disposable! (.. vscode -languages
+                          (registerDefinitionProvider
+                           "clojure"
+                           #js {:provideDefinition var-definition})))
+
+ (aux/add-disposable! (.. vscode -languages
+                          (registerCompletionItemProvider
+                           "clojure"
+                           #js {:provideCompletionItems autocomplete}))))
 
 (defn deactivate []
   (aux/clear-all!))

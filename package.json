@@ -4,7 +4,7 @@
 	"description": "Socket REPL development for your editor",
 	"publisher": "mauricioszabo",
 	"repository": "https://github.com/mauricioszabo/clover/",
-	"version": "0.1.1",
+	"version": "0.2.0",
 	"engines": {
 		"vscode": "^1.50.0"
 	},
@@ -34,18 +34,20 @@
 	],
 	"main": "./extension.js",
 	"contributes": {
-    "taskDefinitions": [
-      {
-        "type": "clover",
-        "required": ["command"],
+		"taskDefinitions": [
+			{
+				"type": "Clover",
+				"required": [
+					"command"
+				],
 				"properties": {
 					"command": {
 						"type": "string",
 						"description": "The registered custom command to be executed"
-				  }
-        }
-      }
-    ],
+					}
+				}
+			}
+		],
 		"commands": [
 			{
 				"command": "extension.connectSocketRepl",
