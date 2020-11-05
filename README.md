@@ -42,6 +42,30 @@ Then, you connect Clover with the port using the command _Connect Clojure Socket
 
 When connected, it'll try to load `compliment` (for autocomplete, falling back to a "simpler" autocomplete if not present). Then you can evaluate code on it.
 
+### Custom Commands
+Exactly as in Chlorine, [there's support for Custom Commands](https://github.com/mauricioszabo/atom-chlorine/blob/master/docs/extending.md). Please follow the link for more explanation, but the idea is that, after connecting to a REPL, you run the command `Clover: Open config file" and then register your custom commands there.
+
+Because of limitations of VSCode, you will **not see** custom commands on the command palette - they are registered as Tasks. So you'll run the command "Tasks: Run Task" and then choose "Clover". There, the custom commands will be presented.
+
+The reason that Clover uses tasks is because **you can set keybindings to tasks** - to register a keybinding to a task, you need to run the command "Preferences: Open Keyboard Shortcuts (JSON)". Be aware that **you need to edit keybindings via  JSON**. There, you'll define a keybinding for the command `workbench.action.tasks.runTask` and the args will be **exactly the name** that appears on the task menu - **case sensitive**.
+
+So, supposed you did add a custom command on your config (one that just prints "Hello, World" to the console:
+
+```clojure
+(defn hello-world []
+  (println "Hello, World!"))
+```
+
+Then, you'll see that the task registered will be named "Clover: Hello world". You can register, for example, `ctrl+h` with the following JSON fragment:
+
+```json
+    {
+        "key": "ctrl+h",
+        "command": "workbench.action.tasks.runTask",
+        "args": "Clover: Hello world"
+    }
+```
+
 ## Keybindings
 To avoid conflicts, this plug-in does not register any keybindings. You can define your own on `keybindings.json`. One possible suggestion is:
 
