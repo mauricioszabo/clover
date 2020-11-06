@@ -142,6 +142,11 @@
 				"type": "object",
 				"title": "Clover",
 				"properties": {
+					"clover.configFile": {
+						"type": "string",
+						"description": "Config file path. Will replace $HOME with your user directory. Defaults to $HOME/.config/clover/config.cljs",
+						"default": ""
+					},
 					"clover.experimental": {
 						"type": "boolean",
 						"description": "Enable experimental, and possible unstable, features?",

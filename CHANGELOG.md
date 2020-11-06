@@ -1,9 +1,8 @@
 # Change Log
 
-## FUTURE
-- More commands comming from Orchard:
-  - find-usages
-  - clojure-doc-for-var
+## 0.2.1
+- Fixed some errors on connecting
+- Added an option to define where to put the config file
 
 ## 0.2.0
 - Remembering host:port (https://github.com/mauricioszabo/clover/issues/7)
