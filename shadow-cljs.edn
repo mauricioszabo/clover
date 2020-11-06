@@ -2,9 +2,9 @@
 {:source-paths ["src" "repl-tooling/src" "repl-tooling/resources"]
 
  :dependencies [[repl-tooling "0.5.3"]
+                [com.wsscode/pathom "2.3.0-alpha17"]
                 [org.rksm/suitable "0.3.2"]
                 [compliment "0.4.0-SNAPSHOT"]
-                [com.wsscode/pathom "2.3.0-alpha17"]
                 [cljfmt "0.6.7"]]
 
  :builds {:plugin {:target :node-library
