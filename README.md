@@ -87,7 +87,7 @@ To avoid conflicts, this plug-in does not register any keybindings. You can defi
     },
     {
         "key": "ctrl+shift+c",
-        "command": "extension.connectSocketRepl",
+        "command": "clover.connectSocketRepl",
         "when": ""
     },
     {
