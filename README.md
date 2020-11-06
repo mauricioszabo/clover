@@ -66,6 +66,36 @@ Then, you'll see that the task registered will be named "Clover: Hello world". Y
     }
 ```
 
+### Refresh Namespaces
+
+Clover does not have the command to use `clojure.tools.namespace` to refresh, but it's easy to add your own version with custom commands:
+
+```clojure
+(def ^:private refresh-needs-clear? (atom true))
+(defn- refresh-full-command []
+  (if @refresh-needs-clear?
+    '(do
+       (clojure.tools.namespace.repl/clear)
+       (clojure.tools.namespace.repl/refresh-all))
+    '(do
+       (clojure.tools.namespace.repl/refresh))))
+
+(defn refresh-namespaces []
+  (p/let [_ (p/catch (editor/eval {:text "(clojure.core/require '[clojure.tools.namespace.repl])"})
+                   (constantly nil))
+          cmd (refresh-full-command)
+          cmd (list 'let ['res cmd]
+                    '(if (= res :ok)
+                       {:html [:div "Refresh Successful"]}
+                       {:html [:div [:div.error [:div/clj res]]]}))
+          res (editor/eval-interactive {:text (pr-str cmd)
+                                        :range [[0 0] [0 0]]
+                                        :namespace "user"})]
+    (if (->> res :result pr-str (re-find #":div/clj"))
+      (reset! refresh-needs-clear? true)
+      (reset! refresh-needs-clear? false))))
+```
+
 ## Keybindings
 To avoid conflicts, this plug-in does not register any keybindings. You can define your own on `keybindings.json`. One possible suggestion is:
 
