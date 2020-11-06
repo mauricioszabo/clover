@@ -42,6 +42,60 @@ Then, you connect Clover with the port using the command _Connect Clojure Socket
 
 When connected, it'll try to load `compliment` (for autocomplete, falling back to a "simpler" autocomplete if not present). Then you can evaluate code on it.
 
+### Custom Commands
+Exactly as in Chlorine, [there's support for Custom Commands](https://github.com/mauricioszabo/atom-chlorine/blob/master/docs/extending.md). Please follow the link for more explanation, but the idea is that, after connecting to a REPL, you run the command `Clover: Open config file" and then register your custom commands there. Please notice that "custom tags" is **not supported**, and probably never will unless VSCode makes its API better - the only custom tags supported are `:div/clj` and `:div/ansi` (the first accepts a Clojure data structure and uses the Clover renderer to render it, the second accepts a string with ANSI codes and color then accordingly).
+
+Because of limitations of VSCode, you will **not see** custom commands on the command palette - they are registered as Tasks. So you'll run the command "Tasks: Run Task" and then choose "Clover". There, the custom commands will be presented. Probably VSCode will ask you if you want to "Scan output of task". It's safe to say "Never scan the output for any Clover task".
+
+The reason that Clover uses tasks is because **you can set keybindings to tasks** - to register a keybinding to a task, you need to run the command "Preferences: Open Keyboard Shortcuts (JSON)". Be aware that **you need to edit keybindings via  JSON**. There, you'll define a keybinding for the command `workbench.action.tasks.runTask` and the args will be **exactly the name** that appears on the task menu - **case sensitive**.
+
+So, supposed you did add a custom command on your config (one that just prints "Hello, World" to the console:
+
+```clojure
+(defn hello-world []
+  (println "Hello, World!"))
+```
+
+Then, you'll see that the task registered will be named "Clover: Hello world". You can register, for example, `ctrl+h` with the following JSON fragment:
+
+```json
+    {
+        "key": "ctrl+h",
+        "command": "workbench.action.tasks.runTask",
+        "args": "Clover: Hello world"
+    }
+```
+
+### Refresh Namespaces
+
+Clover does not have the command to use `clojure.tools.namespace` to refresh, but it's easy to add your own version with custom commands:
+
+```clojure
+(def ^:private refresh-needs-clear? (atom true))
+(defn- refresh-full-command []
+  (if @refresh-needs-clear?
+    '(do
+       (clojure.tools.namespace.repl/clear)
+       (clojure.tools.namespace.repl/refresh-all))
+    '(do
+       (clojure.tools.namespace.repl/refresh))))
+
+(defn refresh-namespaces []
+  (p/let [_ (p/catch (editor/eval {:text "(clojure.core/require '[clojure.tools.namespace.repl])"})
+                   (constantly nil))
+          cmd (refresh-full-command)
+          cmd (list 'let ['res cmd]
+                    '(if (= res :ok)
+                       {:html [:div "Refresh Successful"]}
+                       {:html [:div.error [:div/clj res]]}))
+          res (editor/eval-interactive {:text (pr-str cmd)
+                                        :range [[0 0] [0 0]]
+                                        :namespace "user"})]
+    (if (->> res :result pr-str (re-find #":div/clj"))
+      (reset! refresh-needs-clear? true)
+      (reset! refresh-needs-clear? false))))
+```
+
 ## Keybindings
 To avoid conflicts, this plug-in does not register any keybindings. You can define your own on `keybindings.json`. One possible suggestion is:
 
@@ -63,7 +117,7 @@ To avoid conflicts, this plug-in does not register any keybindings. You can defi
     },
     {
         "key": "ctrl+shift+c",
-        "command": "extension.connectSocketRepl",
+        "command": "clover.connectSocketRepl",
         "when": ""
     },
     {

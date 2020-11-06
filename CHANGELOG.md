@@ -1,5 +1,42 @@
 # Change Log
 
+## FUTURE
+- More commands comming from Orchard:
+  - find-usages
+  - clojure-doc-for-var
+
+## 0.2.0
+- Remembering host:port (https://github.com/mauricioszabo/clover/issues/7)
+- Added custom commands and configs
+- Fix on regexp printing
+- Using another way to connect to Shadow-CLJS
+- Added a config for Experimental Features (exactly the same as Chlorine)
+- Fix error while trying to print lots of really small lines
+- Clickable stacktraces for Clojerl
+- Better printer for Clojerl and nREPL
+- Cutting some stdout messages from aux REPL
+- Better support for Lumo, CLR, and Joker
+- Fixed defining functions with same name as `clojure.core` (fixes https://github.com/mauricioszabo/atom-chlorine/issues/214).
+- Fixed clojure REPL not connecting on first try
+- Interactive eval redirects STDOUT
+- Goto var definition and doc for var now work with ClojureScript's macros
+- Stacktraces on ClojureScript will use source-maps to parse their errors
+
+### Needs experimental features toggled:
+- Implemented the new Websocket REPL of Shadow-CLJS (Remote API)
+- Possibility of running Shadow-CLJS Remote API commands (see: https://github.com/mauricioszabo/repl-tooling/pull/83)
+- `tap>` support for Shadow-CLJS Relay API
+- Support for resolving promises on Shadow Relay API
+
+
+## 0.1.1
+- Fixes on nREPL imports for Orchard, Compliment, etc (https://github.com/mauricioszabo/atom-chlorine/issues/191)
+- Forward-finding namespaces if a NS form was not found before the cursor (fixes https://github.com/mauricioszabo/atom-chlorine/issues/193)
+- Fix on `get-selection` for configs in ClojureScript
+- Performance improvement while parsing Clojure code
+- Fixed error trying to connect to ClojureScript socket REPLs
+- Fixed core Clojerl exception
+
 ## 0.1.0
 - Fixed connection for other Clojure implementations like Clojerl, Joker, etc.
 - Interactive results
