@@ -16,9 +16,10 @@
         [_ curr-var] (helpers/current-var (:contents data) (-> data :range first))
         [_ curr-ns] (helpers/ns-range-for (:contents data) (-> data :range first))
         aux (some-> @st/state :conn deref :clj/aux)
-        repl (e-eval/repl-for (:conn @st/state)
-                              (.. vscode -window -activeTextEditor -document -fileName)
-                              true)]
+        repl (some-> (:conn @st/state)
+                     (e-eval/repl-for
+                      (.. vscode -window -activeTextEditor -document -fileName)
+                      true))]
     (when repl
       (.. (definition/find-var-definition repl aux curr-ns curr-var)
           (then (fn [{:keys [file-name line]}]
@@ -90,7 +91,7 @@
                                                                 "\n")))
 
  (aux/add-disposable! (.. vscode -commands
-                          (registerCommand "extension.connectSocketRepl"
+                          (registerCommand "clover.connectSocketRepl"
                                            conn/connect!)))
  (aux/add-disposable! (.. vscode -languages
                           (registerDefinitionProvider
