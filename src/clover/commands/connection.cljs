@@ -108,7 +108,7 @@
     "source-for-var"
     "connect-embedded"
     "open-config"
-    "goto-var-definition"})
+    "go-to-var-definition"})
 
 (defn- register-commands! [commands]
   (let [experimental? (.. vscode -workspace (getConfiguration "clover") -experimental)]

@@ -66,6 +66,10 @@
 				"title": "Clover: Evaluate current selection of code"
 			},
 			{
+				"command": "clover.go-to-var-definition",
+				"title": "Clover: Goto var definition"
+			},
+			{
 				"command": "clover.clear-console",
 				"title": "Clover: Clear Clojure console"
 			},
