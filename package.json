@@ -30,7 +30,7 @@
 		"workspaceContains:**/project.clj",
 		"workspaceContains:**/shadow-cljs.edn",
 		"workspaceContains:**/deps.edn",
-		"onCommand:extension.connectSocketRepl"
+		"onCommand:clover.connectSocketRepl"
 	],
 	"main": "./extension.js",
 	"contributes": {
@@ -50,7 +50,7 @@
 		],
 		"commands": [
 			{
-				"command": "extension.connectSocketRepl",
+				"command": "clover.connectSocketRepl",
 				"title": "Clover: Connect Socket REPL"
 			},
 			{
