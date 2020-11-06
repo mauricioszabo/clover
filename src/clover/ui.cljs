@@ -145,34 +145,34 @@ span.icon {
 .repl-tooling.result div.browseable,div.row {
   flex-direction: column;
 }
-.repl-tooling.result div .children {
+.repl-tooling.result .children {
   flex-direction: column;
   margin-left: 1.5em;
 }
-.repl-tooling.result div div.error {
+.repl-tooling.result div.error {
   color: var(--vscode-errorForeground);
 }
-.repl-tooling.result div div.rows {
+.repl-tooling.result div.rows {
   display: flex;
   flex-direction: column;
 }
-.repl-tooling.result div div.cols {
+.repl-tooling.result div.cols {
   display: flex;
   flex-direction: row;
 }
-.repl-tooling.result div div.title {
+.repl-tooling.result div.title {
   font-weight: 800;
 }
-.repl-tooling.result div div.pre {
+.repl-tooling.result div.pre {
   white-space: pre-wrap;
 }
-.repl-tooling.result div div.space {
+.repl-tooling.result div.space {
   opacity: 0.1;
   margin: 0.6em;
 }
-.repl-tooling.result div select {
+.repl-tooling.result select {
 }
-.repl-tooling.result div button {
+.repl-tooling.result button {
   padding-left: 0.5em;
   padding-right: 0.5em;
   border-width: 1px;

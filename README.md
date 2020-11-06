@@ -87,7 +87,7 @@ Clover does not have the command to use `clojure.tools.namespace` to refresh, bu
           cmd (list 'let ['res cmd]
                     '(if (= res :ok)
                        {:html [:div "Refresh Successful"]}
-                       {:html [:div [:div.error [:div/clj res]]]}))
+                       {:html [:div.error [:div/clj res]]}))
           res (editor/eval-interactive {:text (pr-str cmd)
                                         :range [[0 0] [0 0]]
                                         :namespace "user"})]
