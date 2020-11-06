@@ -46,13 +46,6 @@
                             clj->js))
        :resolveTask (fn [_ _])})
 
-(defn- extract-host-port [txt]
-  (let [[host port] (str/split txt #":")
-        port (js/parseInt port)]
-    (if (js/isNaN port)
-      (do (vs/error "Port must be a number") nil)
-      [host port])))
-
 (defn- register-console! []
   (ui/create-console!)
   (aux/add-transient! (.. vscode -commands
@@ -65,7 +58,7 @@
   (when-not (empty? @state/state)
     (aux/clear-commands!)
     (aux/clear-transients!)
-    (reset! state/state {})
+    (swap! state/state dissoc :conn)
     (vs/info "Disconnected from REPLs")))
 
 (defn- folders []
@@ -165,6 +158,15 @@
                  (swap! state/state assoc :conn st)
                  (register-console!))))))
 
+(defn- extract-host-port [txt]
+  (let [[host port] (str/split txt #":")
+        port (js/parseInt port)]
+    (if (js/isNaN port)
+      (do (vs/error "Port must be a number") nil)
+      (do
+        (swap! state/state assoc :conn-info txt)
+        [host port]))))
+
 (defn- find-shadow-port []
   (->> (folders)
        (map #(path/join % ".shadow-cljs" "socket-repl.port"))
@@ -172,9 +174,12 @@
        first))
 
 (defn connect! []
-  (if (state/repl-for-clj)
-    (vs/warn "REPL is already connected")
-    (.. (vs/prompt "Connect to Clojure: inform <host>:<port>"
-                   (str "localhost:" (some-> (find-shadow-port) readFileSync)))
-        (then extract-host-port)
-        (then #(when % (connect-clj %))))))
+  (let [conn-info (:conn-info @state/state
+                              (str "localhost:" (some-> (find-shadow-port)
+                                                        readFileSync)))]
+    (if (state/repl-for-clj)
+      (vs/warn "REPL is already connected")
+      (.. (vs/prompt "Connect to Clojure: inform <host>:<port>"
+                     conn-info)
+          (then extract-host-port)
+          (then #(some-> % connect-clj))))))
