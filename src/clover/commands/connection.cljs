@@ -66,6 +66,15 @@
        (map #(-> % .-uri str (str/replace #"file://" "")))
        vec))
 
+(defn- config-dir []
+  (let [config (-> vscode
+                   .-workspace
+                   (.getConfiguration "clover")
+                   .-configFile
+                   not-empty
+                   (or (path/join "$HOME" ".config" "clover" "config.cljs")))]
+    (str/replace config #"\$HOME" (.homedir os))))
+
 (defn- get-config []
   {:project-paths (folders)
    :eval-mode (-> vscode
@@ -134,11 +143,20 @@
     (aset editor "selection" selection)
     (.revealRange ^js editor selection)))
 
+(defn- mkdir-p [directory]
+  (let [parent (path/dirname directory)]
+    (when-not (fs/existsSync directory)
+      (when-not (fs/existsSync parent)
+        (mkdir-p parent))
+      (fs/mkdirSync directory))))
+
 (defn- connect-clj [[host port]]
-  (let [config-file (path/join (.homedir os) ".config" "clover" "config.cljs")]
+  (let [config-file (config-dir)]
     (when-not (fs/existsSync config-file)
-      (try (fs/mkdirSync (path/dirname config-file)) (catch :default _))
-      (fs/closeSync (fs/openSync config-file "w")))
+      (try
+        (mkdir-p (path/dirname config-file))
+        (fs/closeSync (fs/openSync config-file "w"))
+        (catch :default _)))
 
     (.. (connection/connect!
          host port

@@ -4,7 +4,7 @@
 	"description": "Socket REPL development for your editor",
 	"publisher": "mauricioszabo",
 	"repository": "https://github.com/mauricioszabo/clover/",
-	"version": "0.2.0",
+	"version": "0.2.1",
 	"engines": {
 		"vscode": "^1.50.0"
 	},
@@ -142,6 +142,11 @@
 				"type": "object",
 				"title": "Clover",
 				"properties": {
+					"clover.configFile": {
+						"type": "string",
+						"description": "Config file path. Will replace $HOME with your user directory. Defaults to $HOME/.config/clover/config.cljs",
+						"default": ""
+					},
 					"clover.experimental": {
 						"type": "boolean",
 						"description": "Enable experimental, and possible unstable, features?",
