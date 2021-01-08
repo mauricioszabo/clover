@@ -194,8 +194,9 @@ span.icon {
 </html>"))))
 
 (defn post-message! [message]
-  (.. ^js @view -webview
-      (postMessage (pr-str message))))
+  (some-> ^js @view
+          .-webview
+          (.postMessage (pr-str message))))
 
 (defn- evaluate! [{:keys [command repl id]}]
   (when-let [evaluator (if (= repl :clj)

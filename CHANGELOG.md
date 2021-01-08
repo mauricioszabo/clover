@@ -1,5 +1,15 @@
 # Change Log
 
+## 0.2.2
+- Fixed connection for ClojureCLR Alpha (closes https://github.com/mauricioszabo/clover/issues/22)
+- Fixed issues with `prn`
+- Fixed issues with disconnect (sometimes it tries to run callbacks after disconnected)
+- Caching clj-kondo
+- Fixed an error parsing `shadow-cljs.edn` files (closes https://github.com/mauricioszabo/atom-chlorine/issues/226)
+- Fixed nREPL code disconnecting when you send accents
+- Fixed some undetectable var definitions
+- Fixed ClojureScript REPL detection on `.cljs` when `:prefer-cljs` option is selected
+
 ## 0.2.1
 - Fixed some errors on connecting
 - Added an option to define where to put the config file

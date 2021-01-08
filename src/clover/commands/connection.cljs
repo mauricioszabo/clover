@@ -55,6 +55,7 @@
 (defn- disconnect! []
   (connection/disconnect!)
   (some-> ^js @ui/view .dispose)
+  (reset! ui/view nil)
   (when-not (empty? @state/state)
     (aux/clear-commands!)
     (aux/clear-transients!)
