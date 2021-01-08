@@ -1,7 +1,7 @@
 ;; shadow-cljs configuration
 {:source-paths ["src" "repl-tooling/src" "repl-tooling/resources"]
 
- :dependencies [[repl-tooling "0.5.4"]
+ :dependencies [[repl-tooling "0.5.6"]
                 [com.wsscode/pathom "2.3.0-alpha17"]
                 [org.rksm/suitable "0.3.2"]
                 [compliment "0.4.0-SNAPSHOT"]
