@@ -1,6 +1,7 @@
 {
 	"name": "clover",
 	"displayName": "Clover",
+  "license" : "MIT",
 	"description": "Socket REPL development for your editor",
 	"publisher": "mauricioszabo",
 	"repository": "https://github.com/mauricioszabo/clover/",
