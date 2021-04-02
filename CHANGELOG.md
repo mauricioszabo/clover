@@ -1,5 +1,12 @@
 # Change Log
 
+## 0.2.3
+- Auto-detect ports
+- Fix for nREPL
+- Adding a "timeout" when you can't connect to CLJS, with an error with possible reasons
+- Fixed connecting to ClojureScript without experimental features on
+- Removed error on ClojureScript, with experimental features, for Browser targets
+
 ## 0.2.2
 - Fixed connection for ClojureCLR Alpha (closes https://github.com/mauricioszabo/clover/issues/22)
 - Fixed issues with `prn`
