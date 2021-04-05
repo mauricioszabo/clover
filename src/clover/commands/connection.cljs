@@ -161,20 +161,19 @@
         (fs/closeSync (fs/openSync config-file "w"))
         (catch :default _)))
 
-    (.. (connection/connect!
-         host port
-         {:on-stdout #(ui/send-output! :stdout %)
-          :on-stderr #(ui/send-output! :stderr %)
-          :on-disconnect disconnect!
-          :prompt vs/choice
-          :get-config get-config
-          :open-editor open-editor
-          :config-file-path config-file
-          :on-eval #(ui/send-result! % :clj)
-          :on-patch #(ui/post-message! {:command :patch :obj %})
-          :editor-data vs/get-editor-data
-          :register-commands register-commands!
-          :notify notify!})
+    (.. (connection/connect! host port
+                             {:on-stdout #(ui/send-output! :stdout %)
+                              :on-stderr #(ui/send-output! :stderr %)
+                              :on-disconnect disconnect!
+                              :prompt vs/choice
+                              :get-config get-config
+                              :open-editor open-editor
+                              :config-file-path config-file
+                              :on-eval #(ui/send-result! % :clj)
+                              :on-patch #(ui/post-message! {:command :patch :obj %})
+                              :editor-data vs/get-editor-data
+                              :register-commands register-commands!
+                              :notify notify!})
         (then #(when-let [st %]
                  (swap! state/state assoc :conn st)
                  (register-console!))))))
