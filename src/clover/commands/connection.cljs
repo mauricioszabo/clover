@@ -1,6 +1,7 @@
 (ns clover.commands.connection
   (:require [repl-tooling.editor-integration.connection :as connection]
             [repl-tooling.editor-integration.configs :as configs]
+            [repl-tooling.editor-helpers :as helpers]
             [clover.vs :as vs]
             [clover.aux :as aux :include-macros true]
             [clover.ui :as ui]
@@ -48,7 +49,8 @@
 
 (defn- register-console! []
   (ui/create-console!)
-  (aux/add-transient! (.. vscode -commands
+  (aux/add-transient! (.. vscode
+                          -commands
                           (registerCommand "clover.clear-console"
                                            ui/clear-console!))))
 
@@ -159,20 +161,19 @@
         (fs/closeSync (fs/openSync config-file "w"))
         (catch :default _)))
 
-    (.. (connection/connect!
-         host port
-         {:on-stdout #(ui/send-output! :stdout %)
-          :on-stderr #(ui/send-output! :stderr %)
-          :on-disconnect disconnect!
-          :prompt vs/choice
-          :get-config get-config
-          :open-editor open-editor
-          :config-file-path config-file
-          :on-eval #(ui/send-result! % :clj)
-          :on-patch #(ui/post-message! {:command :patch :obj %})
-          :editor-data vs/get-editor-data
-          :register-commands register-commands!
-          :notify notify!})
+    (.. (connection/connect! host port
+                             {:on-stdout #(ui/send-output! :stdout %)
+                              :on-stderr #(ui/send-output! :stderr %)
+                              :on-disconnect disconnect!
+                              :prompt vs/choice
+                              :get-config get-config
+                              :open-editor open-editor
+                              :config-file-path config-file
+                              :on-eval #(ui/send-result! % :clj)
+                              :on-patch #(ui/post-message! {:command :patch :obj %})
+                              :editor-data vs/get-editor-data
+                              :register-commands register-commands!
+                              :notify notify!})
         (then #(when-let [st %]
                  (swap! state/state assoc :conn st)
                  (register-console!))))))
@@ -183,19 +184,15 @@
     (if (js/isNaN port)
       (do (vs/error "Port must be a number") nil)
       (do
-        (swap! state/state assoc :conn-info txt)
+        (swap! state/state assoc :old-conn-info txt :old-port port)
         [host port]))))
 
-(defn- find-shadow-port []
-  (->> (folders)
-       (map #(path/join % ".shadow-cljs" "socket-repl.port"))
-       (filter existsSync)
-       first))
-
 (defn connect! []
-  (let [conn-info (:conn-info @state/state
-                              (str "localhost:" (some-> (find-shadow-port)
-                                                        readFileSync)))]
+  (let [nrepl? (.. vscode -workspace (getConfiguration "clover") -detectNreplPort)
+        port (helpers/get-possible-port (folders) nrepl? (:old-port @state/state))
+        conn-info (if port
+                    (str "localhost:" port)
+                    (:old-conn-info @state/state "localhost:"))]
     (if (state/repl-for-clj)
       (vs/warn "REPL is already connected")
       (.. (vs/prompt "Connect to Clojure: inform <host>:<port>"
