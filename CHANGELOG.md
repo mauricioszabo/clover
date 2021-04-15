@@ -1,5 +1,8 @@
 # Change Log
 
+## 0.2.4
+- Fixed conversion from incomplete string to string
+
 ## 0.2.3
 - Auto-detect ports
 - Fix for nREPL
