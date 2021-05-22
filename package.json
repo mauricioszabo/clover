@@ -180,7 +180,6 @@
 				"editor.formatOnType": true,
 				"editor.autoIndent": "advanced",
 				"editor.formatOnPaste": true,
-				"files.trimTrailingWhitespace": false,
 				"editor.matchBrackets": "near"
 			}
 		}

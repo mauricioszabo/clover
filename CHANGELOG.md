@@ -1,5 +1,8 @@
 # Change Log
 
+## 0.2.5
+- Trailing whitespaces on save is now working
+
 ## 0.2.4
 - Fixed conversion from incomplete string to string
 
