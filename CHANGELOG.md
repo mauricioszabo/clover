@@ -1,5 +1,8 @@
 # Change Log
 
+## 0.2.6
+- Remove Calva's highlight file
+
 ## 0.2.5
 - Trailing whitespaces on save is now working
 
