@@ -5,7 +5,7 @@
 	"description": "Socket REPL development for your editor",
 	"publisher": "mauricioszabo",
 	"repository": "https://github.com/mauricioszabo/clover/",
-	"version": "0.2.6",
+	"version": "0.2.7",
 	"engines": {
 		"vscode": "^1.50.0"
 	},
@@ -129,13 +129,6 @@
 					".joke",
 					".boot"
 				]
-			}
-		],
-		"grammars": [
-			{
-				"language": "clojure",
-				"scopeName": "source.clojure",
-				"path": "./clojure.tmLanguage.json"
 			}
 		],
 		"configuration": [
