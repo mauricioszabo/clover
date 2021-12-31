@@ -7,6 +7,8 @@
                 [compliment "0.4.0-SNAPSHOT"]
                 [cljfmt "0.6.7"]]
 
+ :http {:port 9699}
+
  :builds {:plugin {:target :node-library
                    :js-options {:js-provider :shadow
                                 :keep-native-requires true
@@ -18,10 +20,10 @@
                    :output-dir "lib/js"
                    :output-to "lib/main.js"
                    :devtools {:before-load-async clover.core/before
-                              :after-load clover.core/after}}
+                               :after-load clover.core/after}}
           :browser {:target :browser
                     :asset-path "js"
                     :output-dir "view/js"
                     :modules {:main {:init-fn clover.view.console/main}}
                     :devtools {:loader-mode :eval
-                               :devtools-url "http://localhost:9630"}}}}
+                               :devtools-url "http://localhost:9699"}}}}
