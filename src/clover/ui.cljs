@@ -18,9 +18,6 @@
         res-font-path (.. webview -webview (asWebviewUri (. Uri file font-path)))]
     (set! (.. webview -webview -html) (str "<html>
 <head>
-  <meta http-equiv=\"Content-Security-Policy\" content=\"font-src "
-                                           res-font-path
-                                           ";\">
   <style>
 @font-face {
   font-family: 'Octicons Regular';
@@ -229,14 +226,15 @@ span.icon {
                      (createWebviewPanel "clover-console"
                                          "Clover REPL"
                                          (.. vscode -ViewColumn -Two)
-                                         #js {:enableScripts true
-                                              :retainContextWhenHidden true
-                                              :localResourceRoots #js [res-path]})))
-                                              ; :portMapping #js
-                                              ; [
-                                              ;  #js {
-                                              ;        :extensionHostPort 9630
-                                              ;        :webviewPort 9630}]})))
+                                         (clj->js
+                                          (cond-> {:enableScripts true
+                                                   :retainContextWhenHidden true
+                                                   :localResourceRoots [res-path]}
+
+                                            js/goog.DEBUG
+                                            (assoc
+                                             :portMapping [{:extensionHostPort 9699
+                                                            :webviewPort 9699}]))))))
 
     (do-render-console! @view @curr-dir)
     (listen-to-events! @view)))
