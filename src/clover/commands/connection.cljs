@@ -168,6 +168,7 @@
                               :prompt vs/choice
                               :get-config get-config
                               :open-editor open-editor
+                              :run-command vs/run-command
                               :config-file-path config-file
                               :on-eval #(ui/send-result! % :clj)
                               :on-patch #(ui/post-message! {:command :patch :obj %})

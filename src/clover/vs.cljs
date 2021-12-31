@@ -38,3 +38,7 @@
       :contents (.getText document)
       :filename (.-fileName document)
       :range [start end]})))
+
+(defn run-command [command & args]
+  (let [run! (.. vscode -commands -executeCommand)]
+    (apply run! command args)))
