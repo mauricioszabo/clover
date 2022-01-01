@@ -2,6 +2,8 @@
 
 A Clojure Socket REPL package for Visual Studio Code and Visual Studio Codium
 
+**PLEASE NOTICE:** this repository is only kept for historical purposes, newer code will ONLY be published at GitLab: https://gitlab.com/clj-editors/clover. [There's a good reason for this change](https://mauricio.szabo.link/blog/2021/07/13/the-end-of-an-era-goodbye-github/), even if you don't agree with it.
+
 ## Features
 
 For now, it is possible to connect on a Clojure (and Clojure-ish) socket REPL and evaluate forms. You can load the current file, there's autocomplete, and support for multiple ClojureScript REPLs (with the notable exception being that Figwheel is missing - it only supports Shadow-CLJS and "pure ClojureScript socket REPLs" like Lumo, Plank, `clj` with some additional code, etc).
